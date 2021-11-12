@@ -1,14 +1,17 @@
-# PaperMC Docker
-This is a Linux Docker image for the PaperMC Minecraft server.
+# PaperMC Docker w/ `lazymc` 
+This is a Linux Docker image for the PaperMC Minecraft server with `lazymc`.
 
 PaperMC is an optimized Minecraft server with plugin support (Bukkit, Spigot, Sponge, etc.).
+
+[lazymc](https://github.com/timvisee/lazymc) is a utility that puts your Minecraft server to rest when idle and wakes it up when players try to connect. This allows the server to not waste resources if nobody is connected.
+
 This image provides a basic PaperMC server. All customizations are left to the user.
 # Usage
 It is assumed that the user has already acquired a working Docker installation. If that is not the case, go do that and come back here when you're done.
 ## Command
 With this image, you can create a new PaperMC Minecraft server with one command (note that running said command indicates agreement to the Minecraft EULA). Here is an example:
 
-```sudo docker run -p 25565:25565 phyremaster/papermc```
+```sudo docker run -p 25565:25565 crbanman/papermc```
 
 While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying some...
 ## Options
@@ -57,6 +60,10 @@ Environment variables are options that are specified in the format `-e <NAME>="<
   - If this is not set, the latest PaperMC build for the specified `MC_VERSION` will be used.
   - Changing this on an existing server will change the version *without wiping the server*.
   - `-e PAPER_BUILD="<latest>"`
+- `lazymc` Version
+  - **Name:** `MC_VERSION`
+  - Set this to the version of `lazymc` you want to use.
+  - If not set, the [latest release](https://github.com/timvisee/lazymc/releases/latest) will be used.
 - RAM
   - **Name:** `MC_RAM`
   - Set this to the amount of RAM the server can use.
@@ -77,5 +84,5 @@ This project *does **NOT** redistribute the Minecraft server files*. Instead, th
 **PLEASE NOTE:** This is an unofficial project. I did not create PaperMC. [This is the official PaperMC website.](https://papermc.io/)
 
 ## Project Pages
-- [GitHub page](https://github.com/Phyremaster/papermc-docker).
-- [Docker Hub page](https://hub.docker.com/r/phyremaster/papermc).
+- [GitHub page](https://github.com/crbanman/papermc-lazymc-docker).
+- [Docker Hub page](https://hub.docker.com/r/crbanman/papermc-lazymc).

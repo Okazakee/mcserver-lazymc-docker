@@ -3,6 +3,21 @@
 # Enter server directory
 cd papermc
 
+# Get lazymc
+if [ ${LAZYMC_VERSION} = latest ]
+then
+  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name)
+fi
+LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-x64"
+wget -O lazymc ${LAZYMC_URL}
+chmod +x lazymc
+
+# Generate lazymc.tom if necessary
+if [ ! -e lazymc.toml ]
+then
+  ./lazymc config generate
+fi
+
 # Get version information and build download URL and jar name
 URL=https://papermc.io/api/v2/projects/paper
 if [ ${MC_VERSION} = latest ]
@@ -43,5 +58,8 @@ then
   JAVA_OPTS="-Xms${MC_RAM} -Xmx${MC_RAM} ${JAVA_OPTS}"
 fi
 
+# Update lazymc config command
+sed -i -e "s/command =.*/command = \"java -server ${JAVA_OPTS} -jar ${JAR_NAME} nogui\"/" lazymc.toml
+
 # Start server
-exec java -server ${JAVA_OPTS} -jar ${JAR_NAME} nogui
+exec ./lazymc start
