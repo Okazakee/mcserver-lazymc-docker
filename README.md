@@ -11,7 +11,7 @@ It is assumed that the user has already acquired a working Docker installation. 
 ## Command
 With this image, you can create a new PaperMC Minecraft server with one command (note that running said command indicates agreement to the Minecraft EULA). Here is an example:
 
-```sudo docker run -p 25565:25565 crbanman/papermc```
+```sudo docker run -p 25565:25565 crbanman/papermc-lazymc```
 
 While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying some...
 ## Options
@@ -61,7 +61,7 @@ Environment variables are options that are specified in the format `-e <NAME>="<
   - Changing this on an existing server will change the version *without wiping the server*.
   - `-e PAPER_BUILD="<latest>"`
 - `lazymc` Version
-  - **Name:** `MC_VERSION`
+  - **Name:** `LAZYMC_VERSION`
   - Set this to the version of `lazymc` you want to use.
   - If not set, the [latest release](https://github.com/timvisee/lazymc/releases/latest) will be used.
 - RAM
