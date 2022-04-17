@@ -59,7 +59,7 @@ then
 fi
 
 # Update lazymc config command
-sed -i -e "s/command =.*/command = \"java -server ${JAVA_OPTS} -jar ${JAR_NAME} nogui\"/" lazymc.toml
+sed -i -e "s@command =.*@command = \"java -server ${JAVA_OPTS} -jar ${JAR_NAME} nogui\"@" lazymc.toml
 
 # Start server
 exec ./lazymc start
