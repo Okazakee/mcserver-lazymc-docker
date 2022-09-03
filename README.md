@@ -47,6 +47,12 @@ There are several command line options that users may want to specify when utili
 There is one more command line option, but it is a bit special and deserves its own section.
 ### Environment Variables
 Environment variables are options that are specified in the format `-e <NAME>="<VALUE>"` where `<NAME>` is the name of the environment variable and `<VALUE>` is the value that the environment variable is being set to. Please note that setting an evironment variable with no value does not leave it at default; instead, this sets it to an empty string, which may cause issues. This image has four environment variables:
+- CPU Architecture
+  - **Name:** `CPU_ARCHITECTURE`
+  - Set this to the cpu architecture you want to use.
+  - Selectable architectures are: `x64`, `x64-static`, `aarch64`, `armv7`.
+  - If not set, the `x64` will be used.
+  - `-e CPU_ARCHITECTURE="<x64>"`
 - Minecraft Version
   - **Name:** `MC_VERSION`
   - Set this to the Minecraft version that the server should support.
