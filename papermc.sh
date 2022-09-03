@@ -8,7 +8,7 @@ if [ ${LAZYMC_VERSION} = latest ]
 then
   LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name)
 fi
-LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-x64"
+LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
 wget -O lazymc ${LAZYMC_URL}
 chmod +x lazymc
 
@@ -41,7 +41,7 @@ then
   rm -f *.jar
   # Download new server jar
   wget ${URL} -O ${JAR_NAME}
-  
+
   # If this is the first run, accept the EULA
   if [ ! -e eula.txt ]
   then

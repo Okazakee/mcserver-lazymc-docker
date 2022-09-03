@@ -6,7 +6,8 @@ ENV MC_VERSION="latest" \
     LAZYMC_VERSION="latest" \
     PAPER_BUILD="latest" \
     MC_RAM="" \
-    JAVA_OPTS=""
+    JAVA_OPTS="" \
+    CPU_ARCHITECTURE="x64"
 
 COPY papermc.sh .
 RUN apt-get update \
