@@ -55,7 +55,7 @@ fi
 # Add RAM options to Java options if necessary
 if [ ! -z "${MC_RAM}" ]
 then
-  JAVA_OPTS="-Xms${MC_RAM} -Xmx${MC_RAM} ${JAVA_OPTS}"
+  JAVA_OPTS="-Xms512M -Xmx${MC_RAM} ${JAVA_OPTS}"
 fi
 
 # Update lazymc config command
