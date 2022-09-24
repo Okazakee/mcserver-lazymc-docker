@@ -10,8 +10,8 @@ ENV MC_VERSION="latest" \
     CPU_ARCHITECTURE="x64"
 
 COPY papermc.sh .
-RUN apt-get update \
-    && apt-get install -y wget jq \
+RUN apt update \
+    && apt install -y wget jq \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /papermc
 
