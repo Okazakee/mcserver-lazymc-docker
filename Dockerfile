@@ -4,10 +4,11 @@ FROM openjdk:17-slim
 # Environment variables
 ENV MC_VERSION="latest" \
     LAZYMC_VERSION="latest" \
-    PAPER_BUILD="latest" \
+    SERVER_BUILD="latest" \
     MC_RAM="" \
     JAVA_OPTS="" \
-    CPU_ARCHITECTURE="x64"
+    CPU_ARCHITECTURE="x64" \
+    SERVER_PROVIDER="paper"
 
 COPY papermc.sh .
 RUN apt update \

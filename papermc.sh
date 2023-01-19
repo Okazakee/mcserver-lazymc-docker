@@ -19,20 +19,37 @@ then
 fi
 
 # Get version information and build download URL and jar name
-URL=https://papermc.io/api/v2/projects/paper
-if [ ${MC_VERSION} = latest ]
-then
-  # Get the latest MC version
-  MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
-fi
-URL=${URL}/versions/${MC_VERSION}
-if [ ${PAPER_BUILD} = latest ]
-then
-  # Get the latest build
-  PAPER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
-fi
-JAR_NAME=paper-${MC_VERSION}-${PAPER_BUILD}.jar
-URL=${URL}/builds/${PAPER_BUILD}/downloads/${JAR_NAME}
+case $SERVER_PROVIDER in
+  "purpur")
+    # Get the latest build
+    if [ ${SERVER_BUILD} = latest ]
+    then
+      SERVER_BUILD=$(wget -qO - https://api.purpurmc.org/v2/purpur/${MC_VERSION} | jq -r '.builds[-1]')
+    fi
+    JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
+    URL=https://api.purpurmc.org/v2/purpur/${MC_VERSION}/${SERVER_BUILD}/download
+    ;;
+  "paper")
+    URL=https://papermc.io/api/v2/projects/paper
+    if [ ${MC_VERSION} = latest ]
+    then
+      # Get the latest MC version
+      MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
+    fi
+    URL=${URL}/versions/${MC_VERSION}
+    if [ ${SERVER_BUILD} = latest ]
+    then
+      # Get the latest build
+      SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
+    fi
+    JAR_NAME=paper-${MC_VERSION}-${SERVER_BUILD}.jar
+    URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
+    ;;
+  *)
+    echo "Invalid server provider, please use the ones provided in the documentation"
+    exit 1
+    ;;
+esac
 
 # Update if necessary
 if [ ! -e ${JAR_NAME} ]
