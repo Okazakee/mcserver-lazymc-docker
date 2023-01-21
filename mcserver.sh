@@ -110,7 +110,6 @@ then
   then
     # Run the server once to generate eula.txt
     java -jar ${JAR_NAME}
-    sleep 3
     # Edit eula.txt to accept the EULA
     sed -i 's/false/true/g' eula.txt
   fi
@@ -123,4 +122,15 @@ then
 fi
 
 # Update lazymc config command
+./lazymc config update --server-jar ${JAR_NAME} --java-opts "${JAVA_OPTS}"
+if [ $? -ne 0 ]; then
+    echo "Error: Could not update lazymc config"
+    exit 1
+fi
 
+# Start the server
+./lazymc start
+if [ $? -ne 0 ]; then
+    echo "Error: Could not start the server"
+    exit 1
+fi
