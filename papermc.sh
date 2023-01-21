@@ -4,12 +4,19 @@
 cd papermc
 
 # Get lazymc
-if [ ${LAZYMC_VERSION} = latest ]
+if [ -z "$LAZYMC_VERSION" ]
 then
-  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name)
+  LAZYMC_VERSION=latest
 fi
+
+if [ "$LAZYMC_VERSION" = "latest" ]
+then
+  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name || echo "Error: Could not get latest version of lazymc")
+fi
+
 LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
-wget -O lazymc ${LAZYMC_URL}
+
+wget -O lazymc ${LAZYMC_URL} || echo "Error: Could not download lazymc"
 chmod +x lazymc
 
 # Generate lazymc.tom if necessary
