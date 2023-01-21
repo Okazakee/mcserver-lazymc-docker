@@ -3,7 +3,7 @@ name: Docker multiarch publish
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, staging ]
   workflow_dispatch: # Manual trigger
 
 jobs:
