@@ -7,19 +7,20 @@ cd papermc
 if [ "$LAZYMC_VERSION" = "latest" ]
 then
   LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name)
-  if [ $? -ne 0 ]; then
-    echo "Error: Could not get latest version of lazymc"
+if [ -z "$LAZYMC_VERSION" ]
+  then
+    echo "Error: Could not get latest version of lazymc. Exiting..."
     exit 1
-  fi
 fi
-
-LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
-
+fi
+  LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
+  status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
+    if [ "$status_code" -ne 200 ]
+      then
+        echo "Error: Lazymc version does not exist or is not available. Exiting..."
+        exit 1
+fi
 wget -O lazymc ${LAZYMC_URL}
-if [ $? -ne 0 ]; then
-    echo "Error: Could not download lazymc"
-    exit 1
-fi
 chmod +x lazymc
 
 # Generate lazymc.tom if necessary
@@ -48,10 +49,18 @@ URL=${URL}/versions/${MC_VERSION}
 if [ ${SERVER_BUILD} = latest ]
 then
   # Get the latest build
-  SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
+  PAPER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
 fi
-JAR_NAME=paper-${MC_VERSION}-${SERVER_BUILD}.jar
-URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
+JAR_NAME=paper-${MC_VERSION}-${PAPER_BUILD}.jar
+URL=${URL}/builds/${PAPER_BUILD}/downloads/${JAR_NAME}
+
+#check if build exists
+status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL})
+if [ "$status_code" -ne 200 ]
+  then
+  echo "Error: Build does not exist or is not available. Exiting..."
+  exit 1
+fi
 
 # Update if necessary
 if [ ! -e ${JAR_NAME} ]
