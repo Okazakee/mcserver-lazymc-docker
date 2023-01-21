@@ -39,7 +39,7 @@ case "$SERVER_PROVIDER" in
         URL=https://papermc.io/api/v2/projects/paper
         ;;
     "purpur")
-        URL=https://purpurmc.io/api/v2/projects/purpur
+        URL=https://api.purpurmc.org/v2/purpur/
         ;;
     *)
         echo "Error: Invalid SERVER_PROVIDER. Exiting..."
@@ -84,7 +84,7 @@ then
   # Remove old server jar(s)
   rm -f *.jar
   # Download new server jar
-  wget ${URL} -O ${JAR_NAME} || exit 1
+  wget ${URL} -O ${JAR_NAME}
 
   # If this is the first run, accept the EULA
   if [ ! -e eula.txt ]
