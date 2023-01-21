@@ -7,18 +7,18 @@ cd mcserver
 if [ "$LAZYMC_VERSION" = "latest" ]
 then
   LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name)
-if [ -z "$LAZYMC_VERSION" ]
+  if [ -z "$LAZYMC_VERSION" ]
   then
     echo "Error: Could not get latest version of lazymc. Exiting..."
     exit 1
+  fi
 fi
-fi
-  LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
-  status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
-    if [ "$status_code" -ne 200 ]
-      then
-        echo "Error: Lazymc version does not exist or is not available. Exiting..."
-        exit 1
+LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
+status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
+if [ "$status_code" -ne 200 ]
+  then
+    echo "Error: Lazymc version does not exist or is not available. Exiting..."
+    exit 1
 fi
 wget -O lazymc ${LAZYMC_URL}
 chmod +x lazymc
@@ -62,6 +62,10 @@ if [ ${SERVER_BUILD} = latest ]
 then
   # Get the latest build
   SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
+  if [ $? -ne 0 ]; then
+    echo "Error: Could not get latest build of $SERVER_PROVIDER"
+    exit 1
+  fi
 fi
 JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
 URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
@@ -102,4 +106,4 @@ fi
 sed -i -e "s@command =.*@command = \"java -server ${JAVA_OPTS} -jar ${JAR_NAME} nogui\"@" lazymc.toml
 
 # Start server
-exec ./lazymc start
+exec
