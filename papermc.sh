@@ -22,6 +22,10 @@ fi
 case $SERVER_PROVIDER in
   "purpur")
     # Get the latest build
+    if [ ${MC_VERSION} = latest ] || [ -z ${MC_VERSION} ]
+    then
+      MC_VERSION=$(wget -qO - https://api.purpurmc.org/v2/purpur | jq -r '.versions[-1]')
+    fi
     if [ ${SERVER_BUILD} = latest ]
     then
       SERVER_BUILD=$(wget -qO - https://api.purpurmc.org/v2/purpur/${MC_VERSION} | jq -r '.builds[-1]')
