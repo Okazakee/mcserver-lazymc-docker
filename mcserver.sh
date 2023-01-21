@@ -74,7 +74,7 @@ case "$SERVER_PROVIDER" in
         if [ ${SERVER_BUILD} = latest ]
         then
             # Get the latest build
-            SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds[-1]')
+            SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
             if [ $? -ne 0 ]; then
               echo "Error: Could not get latest build of $SERVER_PROVIDER"
               exit 1
