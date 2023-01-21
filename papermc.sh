@@ -1,16 +1,22 @@
 #!/bin/bash
+set -e
 
 # Enter server directory
 cd papermc
 
 # Get lazymc
-if [ ${LAZYMC_VERSION} = latest ]
+if [ "$LAZYMC_VERSION" = "latest" ]
 then
-  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name)
+  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name || echo "Error: Could not get latest version of lazymc" && exit 1)
 fi
+
 LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
-wget -O lazymc ${LAZYMC_URL}
+
+wget -O lazymc ${LAZYMC_URL} || (echo "Error: Could not download lazymc" && exit 1)
 chmod +x lazymc
+
+# Rest of the script
+
 
 # Generate lazymc.tom if necessary
 if [ ! -e lazymc.toml ]
@@ -19,41 +25,20 @@ then
 fi
 
 # Get version information and build download URL and jar name
-case $SERVER_PROVIDER in
-  "purpur")
-    # Get the latest build
-    if [ ${MC_VERSION} = latest ] || [ -z ${MC_VERSION} ]
-    then
-      MC_VERSION=$(wget -qO - https://api.purpurmc.org/v2/purpur | jq -r '.versions[-1]')
-    fi
-    if [ ${SERVER_BUILD} = latest ]
-    then
-      SERVER_BUILD=$(wget -qO - https://api.purpurmc.org/v2/purpur/${MC_VERSION} | jq -r '.builds[-1]')
-    fi
-    JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-    URL=https://api.purpurmc.org/v2/purpur/${MC_VERSION}/${SERVER_BUILD}/download
-    ;;
-  "paper")
-    URL=https://papermc.io/api/v2/projects/paper
-    if [ ${MC_VERSION} = latest ]
-    then
-      # Get the latest MC version
-      MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
-    fi
-    URL=${URL}/versions/${MC_VERSION}
-    if [ ${SERVER_BUILD} = latest ]
-    then
-      # Get the latest build
-      SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
-    fi
-    JAR_NAME=paper-${MC_VERSION}-${SERVER_BUILD}.jar
-    URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
-    ;;
-  *)
-    echo "Invalid server provider, please use the ones provided in the documentation"
-    exit 1
-    ;;
-esac
+URL=https://papermc.io/api/v2/projects/paper
+if [ ${MC_VERSION} = latest ]
+then
+  # Get the latest MC version
+  MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
+fi
+URL=${URL}/versions/${MC_VERSION}
+if [ ${PAPER_BUILD} = latest ]
+then
+  # Get the latest build
+  PAPER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
+fi
+JAR_NAME=paper-${MC_VERSION}-${PAPER_BUILD}.jar
+URL=${URL}/builds/${PAPER_BUILD}/downloads/${JAR_NAME}
 
 # Update if necessary
 if [ ! -e ${JAR_NAME} ]
