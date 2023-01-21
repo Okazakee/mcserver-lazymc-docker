@@ -81,7 +81,7 @@ case "$SERVER_PROVIDER" in
             fi
         fi
         JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-        URL=${BUILD_URL}/${SERVER_BUILD}/download
+        URL=${BUILD_URL}${SERVER_BUILD}/download
         ;;
     *)
         echo "Error: Invalid SERVER_PROVIDER. Exiting..."
