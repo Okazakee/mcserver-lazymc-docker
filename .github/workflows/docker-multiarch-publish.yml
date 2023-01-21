@@ -32,12 +32,10 @@ jobs:
         id: determine-tag
         run: |
           if [ "$GITHUB_REF" == "refs/heads/master" ]; then
-            export DOCKER_TAG=latest
+            echo "::set-output name=DOCKER_TAG::latest-$GITHUB_SHA"
           else
-            export DOCKER_TAG=$GITHUB_REF
+            echo "::set-output name=DOCKER_TAG::$GITHUB_REF-$GITHUB_SHA"
           fi
-
-      # https://github.com/docker/build-push-action#multi-platform-image
       - name: Build and push to Docker Hub
         uses: docker/build-push-action@v2
         with:
