@@ -28,7 +28,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # https://github.com/docker/build-push-action#multi-platform-image
+      - name: Determine tag
+        id: determine-tag
+        run: |
+          if [ "$GITHUB_REF" == "refs/heads/master" ]; then
+            echo "::set-output name=DOCKER_TAG::latest"
+          else
+            echo "::set-output name=DOCKER_TAG::$GITHUB_REF"
+          fi
+
       - name: Build and push to Docker Hub
         uses: docker/build-push-action@v2
         with:
@@ -36,6 +44,4 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64,,linux/arm64
           push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:openjdk17
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ steps.determine-tag.outputs.DOCKER_TAG }}
