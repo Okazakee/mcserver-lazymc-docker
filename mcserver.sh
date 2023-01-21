@@ -110,6 +110,7 @@ then
   then
     # Run the server once to generate eula.txt
     java -jar ${JAR_NAME}
+    sleep 3
     # Edit eula.txt to accept the EULA
     sed -i 's/false/true/g' eula.txt
   fi
