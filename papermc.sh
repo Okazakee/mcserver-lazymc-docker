@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Enter server directory
 cd papermc
