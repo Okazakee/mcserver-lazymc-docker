@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Enter server directory
 cd papermc
@@ -14,9 +13,6 @@ LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION
 
 wget -O lazymc ${LAZYMC_URL} || (echo "Error: Could not download lazymc" && exit 1)
 chmod +x lazymc
-
-# Rest of the script
-
 
 # Generate lazymc.tom if necessary
 if [ ! -e lazymc.toml ]
