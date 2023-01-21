@@ -10,16 +10,16 @@ ENV MC_VERSION="latest" \
     CPU_ARCHITECTURE="x64" \
     SERVER_PROVIDER="paper"
 
-COPY papermc.sh .
+COPY mcserver.sh .
 RUN apt update \
     && apt install -y wget jq \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir /papermc
+    && mkdir /mcserver
 
 # Start script
-CMD ["sh", "./papermc.sh"]
+CMD ["sh", "./mcserver.sh"]
 
 # Container setup
 EXPOSE 25565/tcp
 EXPOSE 25565/udp
-VOLUME /papermc
+VOLUME /

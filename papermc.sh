@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Enter server directory
 cd papermc
@@ -7,18 +6,30 @@ cd papermc
 # Get lazymc
 if [ "$LAZYMC_VERSION" = "latest" ]
 then
-  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name || echo "Error: Could not get latest version of lazymc" && exit 1)
+  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name)
+  if [ $? -ne 0 ]; then
+    echo "Error: Could not get latest version of lazymc"
+    exit 1
+  fi
 fi
 
 LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
 
-wget -O lazymc ${LAZYMC_URL} || (echo "Error: Could not download lazymc" && exit 1)
+wget -O lazymc ${LAZYMC_URL}
+if [ $? -ne 0 ]; then
+    echo "Error: Could not download lazymc"
+    exit 1
+fi
 chmod +x lazymc
 
 # Generate lazymc.tom if necessary
 if [ ! -e lazymc.toml ]
 then
   ./lazymc config generate
+  if [ $? -ne 0 ]; then
+    echo "Error: Could not generate lazymc config"
+    exit 1
+  fi
 fi
 
 # Get version information and build download URL and jar name
@@ -27,7 +38,12 @@ if [ ${MC_VERSION} = latest ]
 then
   # Get the latest MC version
   MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
+  if [ $? -ne 0 ]; then
+    echo "Error: Could not get latest version of Minecraft"
+    exit 1
+  fi
 fi
+
 URL=${URL}/versions/${MC_VERSION}
 if [ ${PAPER_BUILD} = latest ]
 then
@@ -43,7 +59,7 @@ then
   # Remove old server jar(s)
   rm -f *.jar
   # Download new server jar
-  wget ${URL} -O ${JAR_NAME}
+  wget ${URL} -O ${JAR_NAME} || exit 1
 
   # If this is the first run, accept the EULA
   if [ ! -e eula.txt ]
