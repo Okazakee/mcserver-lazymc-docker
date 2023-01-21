@@ -121,13 +121,6 @@ then
   JAVA_OPTS="-Xms512M -Xmx${MC_RAM} ${JAVA_OPTS}"
 fi
 
-# Update lazymc config command
-./lazymc config update --server-jar ${JAR_NAME} --java-opts "${JAVA_OPTS}"
-if [ $? -ne 0 ]; then
-    echo "Error: Could not update lazymc config"
-    exit 1
-fi
-
 # Start the server
 ./lazymc start
 if [ $? -ne 0 ]; then
