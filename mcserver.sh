@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Enter server directory
-cd papermc
+cd mcserver
 
 # Get lazymc
 if [ "$LAZYMC_VERSION" = "latest" ]
@@ -34,7 +34,19 @@ then
 fi
 
 # Get version information and build download URL and jar name
-URL=https://papermc.io/api/v2/projects/paper
+case "$SERVER_PROVIDER" in
+    "paper")
+        URL=https://papermc.io/api/v2/projects/paper
+        ;;
+    "purpur")
+        URL=https://purpurmc.io/api/v2/projects/purpur
+        ;;
+    *)
+        echo "Error: Invalid SERVER_PROVIDER. Exiting..."
+        exit 1
+        ;;
+esac
+
 if [ ${MC_VERSION} = latest ]
 then
   # Get the latest MC version
@@ -51,7 +63,7 @@ then
   # Get the latest build
   PAPER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
 fi
-JAR_NAME=paper-${MC_VERSION}-${PAPER_BUILD}.jar
+JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${PAPER_BUILD}.jar
 URL=${URL}/builds/${PAPER_BUILD}/downloads/${JAR_NAME}
 
 #check if build exists
