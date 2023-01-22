@@ -6,14 +6,14 @@ cd mcserver
 # Get lazymc
 if [ "$LAZYMC_VERSION" = "latest" ]
 then
-  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name)
+  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name | cut -c 2-)
   if [ -z "$LAZYMC_VERSION" ]
   then
     echo "Error: Could not get latest version of lazymc. Exiting..."
     exit 1
   fi
 fi
-LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
+LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSION/lazymc-$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
 status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
 if [ "$status_code" -ne 200 ]
 then
@@ -35,79 +35,79 @@ fi
 
 # Get version information and build download URL and jar name
 case "$SERVER_PROVIDER" in
-    "paper")
-        URL=https://papermc.io/api/v2/projects/paper
-        if [ ${MC_VERSION} = latest ]
+  "paper")
+      URL=https://papermc.io/api/v2/projects/paper
+      if [ ${MC_VERSION} = latest ]
+      then
+        # Get the latest MC version
+        MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
+        if [ $? -ne 0 ];
         then
-          # Get the latest MC version
-          MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
-          if [ $? -ne 0 ];
-          then
-            echo "Error: Could not get latest version of Minecraft"
-            exit 1
-          fi
+          echo "Error: Could not get latest version of Minecraft"
+          exit 1
         fi
-        URL=${URL}/versions/${MC_VERSION}
-        if [ ${SERVER_BUILD} = latest ]
+      fi
+      URL=${URL}/versions/${MC_VERSION}
+      if [ ${SERVER_BUILD} = latest ]
+      then
+        # Get the latest build
+        SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
+        if [ $? -ne 0 ];
         then
-          # Get the latest build
-          SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
-          if [ $? -ne 0 ];
-          then
-            echo "Error: Could not get latest build of $SERVER_PROVIDER"
-            exit 1
-          fi
-          else
-          # Check if the build exists
-          status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
-          if [ "$status_code" -ne 200 ]
-          then
-            echo "Error: Build does not exist or is not available. Exiting..."
-            exit 1
-          fi
+          echo "Error: Could not get latest build of $SERVER_PROVIDER"
+          exit 1
         fi
-        JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-        URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
-        ;;
-    "purpur")
-        URL=https://api.purpurmc.org/v2/purpur/
-        if [ ${MC_VERSION} = latest ]
+        else
+        # Check if the build exists
+        status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
+        if [ "$status_code" -ne 200 ]
         then
-          # Get the latest MC version
-          MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]')
-          if [ $? -ne 0 ];
-          then
-            echo "Error: Could not get latest version of Minecraft"
-            exit 1
-          fi
+          echo "Error: Build does not exist or is not available. Exiting..."
+          exit 1
         fi
-        BUILD_URL=https://api.purpurmc.org/v2/purpur/${MC_VERSION}/
-        if [ ${SERVER_BUILD} = latest ]
+      fi
+      JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
+      URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
+      ;;
+  "purpur")
+      URL=https://api.purpurmc.org/v2/purpur/
+      if [ ${MC_VERSION} = latest ]
+      then
+        # Get the latest MC version
+        MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]')
+        if [ $? -ne 0 ];
         then
-          # Get the latest build
-          SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
-          if [ $? -ne 0 ];
-          then
-            echo "Error: Could not get latest build of $SERVER_PROVIDER"
-            exit 1
-          fi
-          else
-          # Check if the build exists
-          status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}builds/${SERVER_BUILD})
-          if [ "$status_code" -ne 200 ]
-          then
-            echo "Error: Build does not exist or is not available. Exiting..."
-            exit 1
-          fi
+          echo "Error: Could not get latest version of Minecraft"
+          exit 1
         fi
+      fi
+      BUILD_URL=https://api.purpurmc.org/v2/purpur/${MC_VERSION}/
+      if [ ${SERVER_BUILD} = latest ]
+      then
+        # Get the latest build
+        SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
+        if [ $? -ne 0 ];
+        then
+          echo "Error: Could not get latest build of $SERVER_PROVIDER"
+          exit 1
+        fi
+        else
+        # Check if the build exists
+        status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}builds/${SERVER_BUILD})
+        if [ "$status_code" -ne 200 ]
+        then
+          echo "Error: Build does not exist or is not available. Exiting..."
+          exit 1
+        fi
+      fi
 
-        JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-        URL=${BUILD_URL}${SERVER_BUILD}/download
-        ;;
-    *)
-        echo "Error: Invalid SERVER_PROVIDER. Exiting..."
-        exit 1
-        ;;
+      JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
+      URL=${BUILD_URL}${SERVER_BUILD}/download
+      ;;
+  *)
+      echo "Error: Invalid SERVER_PROVIDER. Exiting..."
+      exit 1
+      ;;
 esac
 
 # Update if necessary
