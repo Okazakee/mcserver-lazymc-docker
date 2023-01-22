@@ -7,20 +7,47 @@ This image provides a basic PaperMC (or alternatives) server. All customizations
 
 # To do:
 - [x] Automatically update server variables inside lazymc.toml.
+- [x] Add Docker Compose section in this README.
 - [ ] Add support for more server providers, please let me know in issues if you want to add new ones.
 - [ ] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
-- [ ] Add Docker Compose section in this README.
+- [ ] Add readme to Dockerhub Repo.
 - [ ] Build a static webpage for the project.
 - [ ] Do not trgger github actions when README or actions yml get pushed.
 
 # Usage
 It is assumed that the user has already acquired a working Docker installation. If that is not the case, go do that and come back here when you're done.
-## Command
-With this image, you can create a new PaperMC (or alternatives) Minecraft server with one command (note that running said command indicates agreement to the Minecraft EULA). Here is an example:
 
-```sudo docker run -p 25565:25565 -e CPU_ARCHITECTURE="<your_cpu_arch>" okazakee/mcserver-lazymc-docker```
+With this image, you can create a new PaperMC (or alternatives) Minecraft server with one command or a docker compose file.
 
+`Note that running said command or docker compose indicates agreement to the Minecraft EULA.`
+
+### Here is an example:
+
+## Using docker run:
+```bash
+sudo docker run -p 25565:25565 -e CPU_ARCHITECTURE="<your_cpu_arch>" okazakee/mcserver-lazymc-docker
+```
 While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying more options/envs.
+
+## Using docker compose:
+
+```yaml
+version: '3.3'
+services:
+    mcserver-lazymc-docker:
+        ports:
+            - '<your-port>:25565'
+        container_name: <your-container-name>
+        environment:
+            - SERVER_PROVIDER=<your-server-provider>
+            - CPU_ARCHITECTURE=<your-cpu-architecture>
+            - MC_RAM=<your-ram-budget>
+        volumes:
+            - '<your-volume-or-path>:/mcserver'
+        image: okazakee/mcserver-lazymc-docker
+```
+
+
 ## Options
 There are several command line options that users may want to specify when utilizing this image. These options are listed below with some brief explanation. An example will be provided with each. In the example, the part that the user can change will be surrounded by angle brackets (`< >`). Remember to *remove the angle brackets* before running the command.
 - Port
@@ -100,6 +127,7 @@ This image has seven environment variables:
   - Set to any additional Java command line options that you would like to include.
   - By default, this environment variable is set to the empty string.
   - `-e JAVA_OPTS="<-XX:+UseConcMarkSweepGC -XX:+UseParNewGC>"`
+
 ## Further Setup
 From this point, the server should be configured in the same way as any other Minecraft server. The server's files, including `server.properties`, can be found in the volume that was specified earlier. The port that was specified earlier will probably need to be forwarded as well. For details on how to do this and other such configuration, Google it, because it works the same as any other Minecraft server.
 # Technical
