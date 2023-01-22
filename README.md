@@ -9,9 +9,9 @@ This image provides a basic PaperMC (or alternatives) server. All customizations
 - [x] Automatically update server variables inside lazymc.toml.
 - [x] Add Docker Compose section in this README.
 - [x] Do not trgger github actions when README or actions yml get pushed.
-- [ ] Add support for more server providers, please let me know in issues if you want to add new ones.
+- [x] Push updated README to Dockerhub Repo.
 - [ ] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
-- [ ] Add readme to Dockerhub Repo.
+- [ ] Add support for more server providers, please let me know in issues if you want to add new ones.
 - [ ] Build a static webpage for the project.
 
 # Usage
