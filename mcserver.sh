@@ -91,14 +91,16 @@ case "$SERVER_PROVIDER" in
             echo "Error: Could not get latest build of $SERVER_PROVIDER"
             exit 1
           fi
+          else
+          # Check if the build exists
+          status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}builds/${SERVER_BUILD})
+          if [ "$status_code" -ne 200 ]
+          then
+            echo "Error: Build does not exist or is not available. Exiting..."
+            exit 1
+          fi
         fi
-        # Check if the build exists
-        status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}builds/${SERVER_BUILD})
-        if [ "$status_code" -ne 200 ]
-        then
-          echo "Error: Build does not exist or is not available. Exiting..."
-          exit 1
-        fi
+
         JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
         URL=${BUILD_URL}${SERVER_BUILD}/download
         ;;
