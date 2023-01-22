@@ -48,4 +48,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ steps.determine-tag.outputs.DOCKER_TAG }}
-          readme: README.md
+          readme: /README.md
