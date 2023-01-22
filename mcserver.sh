@@ -54,7 +54,7 @@ case "$SERVER_PROVIDER" in
         SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
         if [ $? -ne 0 ];
         then
-          echo "Error: Could not get latest build of $SERVER_PROVIDER"
+          echo "Error: Could not get latest build of Paper"
           exit 1
         fi
         else
@@ -62,7 +62,7 @@ case "$SERVER_PROVIDER" in
         status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
         if [ "$status_code" -ne 200 ]
         then
-          echo "Error: Build does not exist or is not available. Exiting..."
+          echo "Error: Paper build does not exist or is not available. Exiting..."
           exit 1
         fi
       fi
@@ -88,7 +88,7 @@ case "$SERVER_PROVIDER" in
         SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
         if [ $? -ne 0 ];
         then
-          echo "Error: Could not get latest build of $SERVER_PROVIDER"
+          echo "Error: Could not get latest build of Purpur"
           exit 1
         fi
         else
@@ -96,7 +96,7 @@ case "$SERVER_PROVIDER" in
         status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}builds/${SERVER_BUILD})
         if [ "$status_code" -ne 200 ]
         then
-          echo "Error: Build does not exist or is not available. Exiting..."
+          echo "Error: Purpur build does not exist or is not available. Exiting..."
           exit 1
         fi
       fi
@@ -118,7 +118,7 @@ then
   # Download new server jar
   if ! curl -f -o ${JAR_NAME} ${URL}
   then
-      echo "Error: URL does not exist or is not available. Exiting..."
+      echo "Error: Jar URL does not exist or is not available. Exiting..."
       exit 1
   fi
 
