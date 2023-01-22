@@ -4,21 +4,22 @@ FROM openjdk:17-slim
 # Environment variables
 ENV MC_VERSION="latest" \
     LAZYMC_VERSION="latest" \
-    PAPER_BUILD="latest" \
+    SERVER_BUILD="latest" \
     MC_RAM="" \
     JAVA_OPTS="" \
-    CPU_ARCHITECTURE="x64"
+    CPU_ARCHITECTURE="" \
+    SERVER_PROVIDER="paper"
 
-COPY papermc.sh .
+COPY mcserver.sh .
 RUN apt update \
-    && apt install -y wget jq \
+    && apt install -y wget jq curl \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir /papermc
+    && mkdir /mcserver
 
 # Start script
-CMD ["sh", "./papermc.sh"]
+CMD ["sh", "./mcserver.sh"]
 
 # Container setup
 EXPOSE 25565/tcp
 EXPOSE 25565/udp
-VOLUME /papermc
+VOLUME /mcserver
