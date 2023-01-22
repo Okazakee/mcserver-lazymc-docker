@@ -7,7 +7,7 @@ ENV MC_VERSION="latest" \
     SERVER_BUILD="latest" \
     MC_RAM="" \
     JAVA_OPTS="" \
-    CPU_ARCHITECTURE="x64" \
+    CPU_ARCHITECTURE="" \
     SERVER_PROVIDER="paper"
 
 COPY mcserver.sh .

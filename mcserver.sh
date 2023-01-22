@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Check if CPU architecture is set
+if [ -z "$CPU_ARCHITECTURE" ]
+then
+  echo "Error: Please include CPU architecture. Exiting..."
+  exit 1
+fi
+
 # Enter server directory
 cd mcserver
 
