@@ -57,6 +57,14 @@ case "$SERVER_PROVIDER" in
               echo "Error: Could not get latest build of $SERVER_PROVIDER"
               exit 1
             fi
+            else
+            # Check if the build exists
+            status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
+            if [ "$status_code" -ne 200 ]
+            then
+              echo "Error: Build does not exist or is not available. Exiting..."
+              exit 1
+            fi
         fi
         JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
         URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
@@ -77,10 +85,18 @@ case "$SERVER_PROVIDER" in
         if [ ${SERVER_BUILD} = latest ]
         then
             # Get the latest build
-            SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.all[-1]')
+            SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
             if [ $? -ne 0 ];
             then
               echo "Error: Could not get latest build of $SERVER_PROVIDER"
+              exit 1
+            fi
+            else
+            # Check if the build exists
+            status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}builds/${SERVER_BUILD})
+            if [ "$status_code" -ne 200 ]
+            then
+              echo "Error: Build does not exist or is not available. Exiting..."
               exit 1
             fi
         fi
@@ -101,7 +117,7 @@ then
   # Download new server jar
   if ! curl -f -o ${JAR_NAME} ${URL}
   then
-      echo "Error: Build does not exist or is not available. Exiting..."
+      echo "Error: URL does not exist or is not available. Exiting..."
       exit 1
   fi
 
