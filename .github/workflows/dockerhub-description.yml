@@ -17,5 +17,5 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-        repository: okazakee/mcserver-lazymc-docker
+        repository: ${{ secrets.DOCKERHUB_REPOSITORY_README }}
         short-description: ${{ github.event.repository.description }}
