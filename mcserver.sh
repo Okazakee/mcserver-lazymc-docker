@@ -111,7 +111,7 @@ esac
 if [ ! -e ${JAR_NAME} ]
 then
   # Remove old server jar(s)
-  echo "Removing old server jars..."
+  echo "Removing old server jar(s)..."
   rm -f *.jar
   # Download new server jar
   if ! curl -f -o ${JAR_NAME} ${URL}
