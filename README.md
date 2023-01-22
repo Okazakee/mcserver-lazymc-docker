@@ -11,6 +11,7 @@ This image provides a basic PaperMC (or alternatives) server. All customizations
 - [ ] Add Docker Compose section in this README.
 - [ ] Build a stati webpage for the project.
 - [ ] Do not trgger github actions when README or actions yml get pushed.
+- [ ] Automatically insert server variables inside lazymc.toml
 
 # Usage
 It is assumed that the user has already acquired a working Docker installation. If that is not the case, go do that and come back here when you're done.
