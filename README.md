@@ -6,11 +6,11 @@ This is a Linux Docker image for creating Minecraft servers with `lazymc`.
 This image provides a basic PaperMC (or alternatives) server. All customizations are left to the user.
 
 # To do:
-- [x] Automatically insert server variables inside lazymc.toml
+- [x] Automatically update server variables inside lazymc.toml.
 - [ ] Add support for more server providers, please let me know in issues if you want to add new ones.
 - [ ] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
 - [ ] Add Docker Compose section in this README.
-- [ ] Build a stati webpage for the project.
+- [ ] Build a static webpage for the project.
 - [ ] Do not trgger github actions when README or actions yml get pushed.
 
 # Usage

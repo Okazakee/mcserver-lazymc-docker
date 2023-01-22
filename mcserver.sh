@@ -148,7 +148,12 @@ then
 else
   # Add new values to lazymc.toml
   echo "Updating lazymc.toml with latest details"
-  sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
+  # Check if the comment is already present in the file
+  if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
+  then
+    # Add the comment to the file
+    sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
+  fi
   sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
 fi
 
