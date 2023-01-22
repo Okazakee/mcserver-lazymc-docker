@@ -7,6 +7,9 @@ This image provides a basic PaperMC (or alternatives) server. All customizations
 
 # To do:
 - Add support for more server providers, please let me know in issues if you want to add new ones.
+- Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
+- Add Docker Compose section in this README.
+- Build a stati webpage for the project.
 
 # Usage
 It is assumed that the user has already acquired a working Docker installation. If that is not the case, go do that and come back here when you're done.
@@ -15,7 +18,7 @@ With this image, you can create a new PaperMC (or alternatives) Minecraft server
 
 ```sudo docker run -p 25565:25565 -e CPU_ARCHITECTURE="<your_cpu_arch>" okazakee/mcserver-lazymc-docker```
 
-While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying some...
+While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying more options/envs.
 ## Options
 There are several command line options that users may want to specify when utilizing this image. These options are listed below with some brief explanation. An example will be provided with each. In the example, the part that the user can change will be surrounded by angle brackets (`< >`). Remember to *remove the angle brackets* before running the command.
 - Port
