@@ -16,6 +16,6 @@ jobs:
       uses: peter-evans/dockerhub-description@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
         repository: ${{ secrets.DOCKERHUB_REPOSITORY }}
         short-description: ${{ github.event.repository.description }}
