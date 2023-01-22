@@ -12,8 +12,7 @@ ENV MC_VERSION="latest" \
 
 COPY mcserver.sh .
 RUN apt update \
-    && apt install -y curl \
-    && apt install -y wget jq \
+    && apt install -y wget jq curl \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /mcserver
 
