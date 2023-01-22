@@ -111,6 +111,7 @@ esac
 if [ ! -e ${JAR_NAME} ]
 then
   # Remove old server jar(s)
+  echo "Removing old server jars..."
   rm -f *.jar
   # Download new server jar
   if ! curl -f -o ${JAR_NAME} ${URL}
@@ -147,7 +148,7 @@ then
   fi
 else
   # Add new values to lazymc.toml
-  echo "Updating lazymc.toml with latest details"
+  echo "Updating lazymc.toml with latest details..."
   # Check if the comment is already present in the file
   if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
   then
