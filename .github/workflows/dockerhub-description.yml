@@ -16,6 +16,6 @@ jobs:
       uses: peter-evans/dockerhub-description@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        repository: ${{ secrets.DOCKERHUB_REPOSITORY }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        repository: okazakee/mcserver-lazymc-docker
         short-description: ${{ github.event.repository.description }}
