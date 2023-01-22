@@ -30,16 +30,6 @@ fi
 wget -O lazymc ${LAZYMC_URL}
 chmod +x lazymc
 
-# Generate lazymc.tom if necessary
-if [ ! -e lazymc.toml ]
-then
-  ./lazymc config generate
-  if [ $? -ne 0 ]; then
-    echo "Error: Could not generate lazymc config"
-    exit 1
-  fi
-fi
-
 # Get version information and build download URL and jar name
 case "$SERVER_PROVIDER" in
   "paper")
@@ -143,7 +133,26 @@ fi
 if [ ! -z "${MC_RAM}" ]
 then
   JAVA_OPTS="-Xms512M -Xmx${MC_RAM} ${JAVA_OPTS}"
+else
+  JAVA_OPTS="-Xms512M ${JAVA_OPTS}"
 fi
+
+# Generate lazymc.toml if necessary
+if [ ! -e lazymc.toml ]
+then
+  ./lazymc config generate
+  if [ $? -ne 0 ]; then
+    echo "Error: Could not generate lazymc config"
+    exit 1
+  fi
+else
+  # Add new values to lazymc.toml
+  echo "Updating lazymc.toml with latest details"
+  sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
+  sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
+fi
+
+
 
 # Start the server
 ./lazymc start
