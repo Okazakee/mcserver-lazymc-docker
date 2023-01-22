@@ -57,14 +57,14 @@ case "$SERVER_PROVIDER" in
             echo "Error: Could not get latest build of $SERVER_PROVIDER"
             exit 1
           fi
-        fi
-        else
-        # Check if the build exists
-        status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
-        if [ "$status_code" -ne 200 ]
-        then
-          echo "Error: Build does not exist or is not available. Exiting..."
-          exit 1
+          else
+          # Check if the build exists
+          status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
+          if [ "$status_code" -ne 200 ]
+          then
+            echo "Error: Build does not exist or is not available. Exiting..."
+            exit 1
+          fi
         fi
         JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
         URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
@@ -84,15 +84,14 @@ case "$SERVER_PROVIDER" in
         BUILD_URL=https://api.purpurmc.org/v2/purpur/${MC_VERSION}/
         if [ ${SERVER_BUILD} = latest ]
         then
-            # Get the latest build
-            SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
-            if [ $? -ne 0 ];
-            then
-              echo "Error: Could not get latest build of $SERVER_PROVIDER"
-              exit 1
-            fi
+          # Get the latest build
+          SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
+          if [ $? -ne 0 ];
+          then
+            echo "Error: Could not get latest build of $SERVER_PROVIDER"
+            exit 1
+          fi
         fi
-        else
         # Check if the build exists
         status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}builds/${SERVER_BUILD})
         if [ "$status_code" -ne 200 ]
