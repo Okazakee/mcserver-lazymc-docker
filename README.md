@@ -10,7 +10,7 @@ This image provides a basic PaperMC (or alternatives) server. All customizations
 - [x] Add Docker Compose section in this README.
 - [x] Do not trgger github actions when README or actions yml get pushed.
 - [x] Push updated README to Dockerhub Repo.
-- [ ] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
+- [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
 - [ ] Add support for more server providers, please let me know in issues if you want to add new ones.
 - [ ] Build a static webpage for the project.
 
