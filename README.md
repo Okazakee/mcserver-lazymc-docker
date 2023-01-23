@@ -39,9 +39,13 @@ services:
             - '<your-port>:25565'
         container_name: <your-container-name>
         environment:
-            - SERVER_PROVIDER=<your-server-provider>
             - CPU_ARCHITECTURE=<your-cpu-architecture>
+            - SERVER_PROVIDER=<your-server-provider>
+            - LAZYMC_VERSION=<your-lazymc-version>
+            - MC_VERSION=<your-mc-version>
+            - SERVER_BUILD=<your-server-build>
             - MC_RAM=<your-ram-budget>
+            - JAVA_OPTS=<your-java-arguments>
         volumes:
             - '<your-volume-or-path>:/mcserver'
         image: okazakee/mcserver-lazymc-docker
