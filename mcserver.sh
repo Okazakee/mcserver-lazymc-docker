@@ -45,7 +45,7 @@ LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSIO
 status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
 if [ "$status_code" -ne 302 ]
 then
-  echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m"
+  echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or CPU $CPU_ARCHITECTURE is not supported. Exiting... \033[0m"
   echo "Something went wrong, retry." > ../server_cfg.txt
   exit 1
 fi
