@@ -1,5 +1,5 @@
 # JRE base
-FROM openjdk:17-slim
+FROM eclipse-temurin:17.0.5_8-jre-jammy
 
 # Environment variables
 ENV CPU_ARCHITECTURE="" \
