@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if CPU architecture is set and if it's a correct value
-ACCEPTED_VALUES=("armv7" "aarch64" "x64" "x64-static")
-if [ -z "$CPU_ARCHITECTURE" ] || ! echo "${ACCEPTED_VALUES[@]}" | grep -wq "$CPU_ARCHITECTURE"; then
+ACCEPTED_VALUES="armv7 aarch64 x64 x64-static"
+if [ -z "$CPU_ARCHITECTURE" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCHITECTURE"; then
   echo "\033[0;31mError: Please include a valid CPU architecture. Exiting... \033[0m"
   exit 1
 fi
@@ -172,7 +172,7 @@ then
   # Run the server once to generate eula.txt
   echo "\033[0;33mGenerating EULA... \033[0m"
   echo ""
-  java -jar ${JAR_NAME}
+  java -jar ${JAR_NAME} > /dev/null 2>&1
   if [ $? -ne 0 ]
   then
       echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m"
