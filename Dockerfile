@@ -22,4 +22,6 @@ CMD ["sh", "./mcserver.sh"]
 # Container setup
 EXPOSE 25565/tcp
 EXPOSE 25565/udp
+EXPOSE 25575/tcp
+EXPOSE 25575/udp
 VOLUME /mcserver

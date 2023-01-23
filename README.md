@@ -11,7 +11,7 @@ This image provides a basic PaperMC (or alternatives) server. All customizations
 - [x] Do not trgger github actions when README or actions yml get pushed.
 - [x] Push updated README to Dockerhub Repo.
 - [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
-- [ ] Substitute openjdk with temurin/adoptium
+- [x] Substitute Openjdk with Temurin -> reduced docker image size by 57.52%!
 - [ ] Vanilla Support
 - [ ] Fabric Support
 - [ ] Pufferfish Support
