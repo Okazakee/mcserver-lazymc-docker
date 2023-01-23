@@ -7,6 +7,16 @@ then
   exit 1
 fi
 
+# Recap the user all settings
+echo "These are your settings"
+echo "Minecraft Version:" $MC_VERSION
+echo "Lazymc version:" $LAZYMC_VERSION
+echo "Server provider:" $SERVER_PROVIDER
+echo "Server build" $SERVER_BUILD
+echo "CPU architecture" $CPU_ARCHITECTURE
+echo "Dedicated RAM:" $MC_RAM
+echo "Java options:" $JAVA_OPTS
+
 # Enter server directory
 cd mcserver
 
