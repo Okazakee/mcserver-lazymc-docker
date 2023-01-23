@@ -142,7 +142,7 @@ case "$SERVER_PROVIDER" in
       URL=${BUILD_URL}${SERVER_BUILD}/download
       ;;
   *)
-      echo "\033[0;31mError: $SERVER_PROVIDER is not a valid provider. Exiting... \033[0m"
+      echo "\033[0;31mError: $SERVER_PROVIDER is not a valid or currently supported provider. Exiting... \033[0m"
       echo "Something went wrong, retry." > ../server_cfg.txt
       exit 1
       ;;
