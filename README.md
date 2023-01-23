@@ -10,7 +10,7 @@ This image provides a basic PaperMC (or alternatives) server. All customizations
 - [x] Add Docker Compose section in this README.
 - [x] Do not trgger github actions when README or actions yml get pushed.
 - [x] Push updated README to Dockerhub Repo.
-- [ ] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
+- [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
 - [ ] Add support for more server providers, please let me know in issues if you want to add new ones.
 - [ ] Build a static webpage for the project.
 
@@ -39,9 +39,13 @@ services:
             - '<your-port>:25565'
         container_name: <your-container-name>
         environment:
-            - SERVER_PROVIDER=<your-server-provider>
             - CPU_ARCHITECTURE=<your-cpu-architecture>
+            - SERVER_PROVIDER=<your-server-provider>
+            - LAZYMC_VERSION=<your-lazymc-version>
+            - MC_VERSION=<your-mc-version>
+            - SERVER_BUILD=<your-server-build>
             - MC_RAM=<your-ram-budget>
+            - JAVA_OPTS=<your-java-arguments>
         volumes:
             - '<your-volume-or-path>:/mcserver'
         image: okazakee/mcserver-lazymc-docker

@@ -2,13 +2,13 @@
 FROM openjdk:17-slim
 
 # Environment variables
-ENV MC_VERSION="latest" \
+ENV CPU_ARCHITECTURE="" \
+    SERVER_PROVIDER="paper" \
     LAZYMC_VERSION="latest" \
+    MC_VERSION="latest" \
     SERVER_BUILD="latest" \
     MC_RAM="" \
-    JAVA_OPTS="" \
-    CPU_ARCHITECTURE="" \
-    SERVER_PROVIDER="paper"
+    JAVA_OPTS=""
 
 COPY mcserver.sh .
 RUN apt update \
