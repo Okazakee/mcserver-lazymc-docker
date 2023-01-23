@@ -7,6 +7,9 @@ if [ -z "$CPU_ARCHITECTURE" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCH
   exit 1
 fi
 
+# Enter server directory
+cd mcserver
+
 #display current config to the user and save to server_cfg.txt
 echo ""
 echo "\033[0;33mMinecraft server settings: \033[0m" | tee server_cfg.txt
@@ -19,13 +22,10 @@ echo "CPU architecture= \033[0;33m$CPU_ARCHITECTURE\033[0m" | tee -a server_cfg.
 echo "Dedicated RAM= \033[0;33m${MC_RAM:-"Not specified."}\033[0m" | tee -a server_cfg.txt
 echo "Java options= \033[0;33m${JAVA_OPTS:-"Not specified."}\033[0m" | tee -a server_cfg.txt
 echo ""
-echo "\033[0;33mCurrent configuration saved to server_cfg.txt \033[0m"
+echo "\033[0;33mCurrent configuration saved to mcserver/server_cfg.txt \033[0m"
 echo ""
 #give user time to read
 sleep 2
-
-# Enter server directory
-cd mcserver
 
 # Get lazymc
 if [ "$LAZYMC_VERSION" = "latest" ]
@@ -34,7 +34,7 @@ then
   if [ -z "$LAZYMC_VERSION" ]
   then
     echo "\033[0;31mError: Could not get latest version of lazymc. Exiting... \033[0m"
-    echo "Something went wrong, retry." > ../server_cfg.txt
+    echo "Something went wrong, retry." > server_cfg.txt
     exit 1
   fi
 fi
@@ -43,7 +43,7 @@ status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
 if [ "$status_code" -ne 302 ]
 then
   echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m"
-  echo "Something went wrong, retry." > ../server_cfg.txt
+  echo "Something went wrong, retry." > server_cfg.txt
   exit 1
 fi
 
@@ -65,7 +65,7 @@ case "$SERVER_PROVIDER" in
         if [ $? -ne 0 ]
         then
           echo "\033[0;31mError: Could not get latest version of Minecraft \033[0m"
-          echo "Something went wrong, retry." > ../server_cfg.txt
+          echo "Something went wrong, retry." > server_cfg.txt
           exit 1
         fi
       fi
@@ -79,7 +79,7 @@ case "$SERVER_PROVIDER" in
         if [ $? -ne 0 ]
         then
           echo "\033[0;31mError: Could not get latest build of Paper \033[0m"
-          echo "Something went wrong, retry." > ../server_cfg.txt
+          echo "Something went wrong, retry." > server_cfg.txt
           exit 1
         fi
         else
@@ -90,7 +90,7 @@ case "$SERVER_PROVIDER" in
         if [ "$status_code" -ne 200 ]
         then
           echo "\033[0;31mError: Paper $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m"
-          echo "Something went wrong, retry." > ../server_cfg.txt
+          echo "Something went wrong, retry." > server_cfg.txt
           exit 1
         fi
       fi
@@ -108,7 +108,7 @@ case "$SERVER_PROVIDER" in
         if [ $? -ne 0 ]
         then
           echo "\033[0;31mError: Could not get latest version of Minecraft \033[0m"
-          echo "Something went wrong, retry." > ../server_cfg.txt
+          echo "Something went wrong, retry." > server_cfg.txt
           exit 1
         fi
       fi
@@ -122,7 +122,7 @@ case "$SERVER_PROVIDER" in
         if [ $? -ne 0 ]
         then
           echo "\033[0;31mError: Could not get latest build of Purpur \033[0m"
-          echo "Something went wrong, retry." > ../server_cfg.txt
+          echo "Something went wrong, retry." > server_cfg.txt
           exit 1
         fi
         else
@@ -133,7 +133,7 @@ case "$SERVER_PROVIDER" in
         if [ "$status_code" -ne 200 ]
         then
           echo "\033[0;31mError: Purpur $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m"
-          echo "Something went wrong, retry." > ../server_cfg.txt
+          echo "Something went wrong, retry." > server_cfg.txt
           exit 1
         fi
       fi
@@ -143,7 +143,7 @@ case "$SERVER_PROVIDER" in
       ;;
   *)
       echo "\033[0;31mError: $SERVER_PROVIDER is not a valid or currently supported provider. Exiting... \033[0m"
-      echo "Something went wrong, retry." > ../server_cfg.txt
+      echo "Something went wrong, retry." > server_cfg.txt
       exit 1
       ;;
 esac
@@ -161,7 +161,7 @@ then
   if ! curl -f -o ${JAR_NAME} -sS ${URL}
   then
     echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m"
-    echo "Something went wrong, retry." > ../server_cfg.txt
+    echo "Something went wrong, retry." > server_cfg.txt
     exit 1
   fi
 fi
@@ -176,7 +176,7 @@ then
   if [ $? -ne 0 ]
   then
       echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m"
-      echo "Something went wrong, retry." > ../server_cfg.txt
+      echo "Something went wrong, retry." > server_cfg.txt
       exit 1
   fi
 
@@ -205,7 +205,7 @@ then
   if [ $? -ne 0 ]
   then
     echo "\033[0;31mError: Could not generate lazymc.toml \033[0m"
-    echo "Something went wrong, retry." > ../server_cfg.txt
+    echo "Something went wrong, retry." > server_cfg.txt
     exit 1
   fi
 else
@@ -230,6 +230,6 @@ echo ""
 if [ $? -ne 0 ]
 then
   echo "\033[0;31mError: Could not start the server \033[0m"
-  echo "Something went wrong, retry." > ../server_cfg.txt
+  echo "Something went wrong, retry." > server_cfg.txt
   exit 1
 fi
