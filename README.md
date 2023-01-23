@@ -11,8 +11,12 @@ This image provides a basic PaperMC (or alternatives) server. All customizations
 - [x] Do not trgger github actions when README or actions yml get pushed.
 - [x] Push updated README to Dockerhub Repo.
 - [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
-- [ ] Add support for more server providers, please let me know in issues if you want to add new ones.
-- [ ] Build a static webpage for the project.
+- [ ] Substitute openjdk with temurin/adoptium
+- [ ] Vanilla Support
+- [ ] Fabric Support
+- [ ] Pufferfish Support
+- [ ] Arclight Support
+- [ ] Build a webpage for the project.
 
 # Usage
 It is assumed that the user has already acquired a working Docker installation. If that is not the case, go do that and come back here when you're done.
@@ -134,6 +138,9 @@ This image has seven environment variables:
 
 ## Further Setup
 From this point, the server should be configured in the same way as any other Minecraft server. The server's files, including `server.properties`, can be found in the volume that was specified earlier. The port that was specified earlier will probably need to be forwarded as well. For details on how to do this and other such configuration, Google it, because it works the same as any other Minecraft server.
+### Suggested repo for optimizing your settings: [YouHaveTrouble/minecraft-optimization](https://github.com/YouHaveTrouble/minecraft-optimization)
+
+
 # Technical
 This project *does **NOT** redistribute the Minecraft server files*.
 
