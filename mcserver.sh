@@ -1,18 +1,15 @@
 #!/bin/bash
 
-# Check if CPU architecture is set
-if [ -z "$CPU_ARCHITECTURE" ]
-then
-  echo "\033[0;31mError: Please include CPU architecture. Exiting... \033[0m"
+# Check if CPU architecture is set and if it's a correct value
+ACCEPTED_VALUES=("armv7" "aarch64" "x64" "x64-static")
+if [ -z "$CPU_ARCHITECTURE" ] || ! echo "${ACCEPTED_VALUES[@]}" | grep -wq "$CPU_ARCHITECTURE"; then
+  echo "\033[0;31mError: Please include a valid CPU architecture. Exiting... \033[0m"
   exit 1
 fi
 
-# Recap the user all settings
-  #delete old server_cfg
-  > server_cfg.txt
-#display to the user and save to server_cfg.txt
+#display current config to the user and save to server_cfg.txt
 echo ""
-echo "\033[0;33mMinecraft server settings: \033[0m" | tee -a server_cfg.txt
+echo "\033[0;33mMinecraft server settings: \033[0m" | tee server_cfg.txt
 echo "" | tee -a server_cfg.txt
 echo "Minecraft Version= \033[0;33m$MC_VERSION\033[0m" | tee -a server_cfg.txt
 echo "Lazymc version= \033[0;33m$LAZYMC_VERSION\033[0m" | tee -a server_cfg.txt
@@ -25,7 +22,7 @@ echo ""
 echo "\033[0;33mCurrent configuration saved to server_cfg.txt \033[0m"
 echo ""
 #give user time to read
-sleep 3
+sleep 2
 
 # Enter server directory
 cd mcserver
@@ -45,7 +42,7 @@ LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSIO
 status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
 if [ "$status_code" -ne 302 ]
 then
-  echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or CPU $CPU_ARCHITECTURE is not supported. Exiting... \033[0m"
+  echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m"
   echo "Something went wrong, retry." > ../server_cfg.txt
   exit 1
 fi
