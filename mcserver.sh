@@ -34,8 +34,7 @@ then
   LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name | cut -c 2-)
   if [ -z "$LAZYMC_VERSION" ]
   then
-    echo "\033[0;31mError: Could not get latest version of lazymc. Exiting... \033[0m"
-    echo "Something went wrong, retry." > server_cfg.txt
+    echo "\033[0;31mError: Could not get latest version of lazymc. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
 fi
@@ -43,8 +42,7 @@ LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSIO
 status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
 if [ "$status_code" -ne 302 ]
 then
-  echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m"
-  echo "Something went wrong, retry." > server_cfg.txt
+  echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
   exit 1
 fi
 
@@ -71,6 +69,17 @@ else
     echo "Invalid server provider value"
 fi
 
+#set the BUILD_FETCH_API value based on SERVER_PROVIDER
+case $SERVER_PROVIDER in
+    "provider1") BUILD_FETCH_API="https://provider1.com/fetch-build";;
+    "provider2") BUILD_FETCH_API="https://provider2.com/fetch-build";;
+    "provider3") BUILD_FETCH_API="https://provider3.com/fetch-build";;
+    *)
+    echo "\033[0;31mError: $SERVER_PROVIDER does not support custom builds number. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+    ;;
+esac
+
 # Latest version API - thx to serverjars.com
 API_FETCH_LATEST="serverjars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
 
@@ -82,8 +91,7 @@ then
   MC_VERSION=$(wget -qO - $API_FETCH_LATEST | jq -r '.response.version')
   if [ $? -ne 0 ]
   then
-    echo "\033[0;31mError: Could not get latest version of Minecraft \033[0m"
-    echo "Something went wrong, retry." > server_cfg.txt
+    echo "\033[0;31mError: Could not get latest version of Minecraft. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
 fi
@@ -97,17 +105,16 @@ then
   # Get the latest build - GIMMICK CODE SINCE MAJOR SCRIPT UPDATE
   echo "\033[0;33mGetting latest build for ${SERVER_PROVIDER}... \033[0m"
   echo ""
-  #else
+  else
   # TODO Check if the build exists
-  #echo "\033[0;33mChecking existance of $SERVER_BUILD build for ${SERVER_PROVIDER} \033[0m"
-  #echo ""
-  #status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
-  #if [ "$status_code" -ne 200 ]
-  #then
-    #echo "\033[0;31mError: ${SERVER_PROVIDER} $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m"
-    #echo "Something went wrong, retry." > server_cfg.txt
-    #exit 1
-  #fi
+  echo "\033[0;33mChecking existance of $SERVER_BUILD build for ${SERVER_PROVIDER} \033[0m"
+  echo ""
+  status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
+  if [ "$status_code" -ne 200 ]
+  then
+    echo "\033[0;31mError: ${SERVER_PROVIDER} $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
 fi
 JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
 
@@ -125,8 +132,7 @@ then
   echo ""
   if ! curl -f -o ${JAR_NAME} -sS ${API_FETCH_JAR}
   then
-    echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m"
-    echo "Something went wrong, retry." > server_cfg.txt
+    echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
 fi
@@ -140,8 +146,7 @@ then
   java -jar ${JAR_NAME} > /dev/null 2>&1
   if [ $? -ne 0 ]
   then
-      echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m"
-      echo "Something went wrong, retry." > server_cfg.txt
+      echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m" | tee server_cfg.txt
       exit 1
   fi
 
@@ -169,8 +174,7 @@ then
   ./lazymc config generate
   if [ $? -ne 0 ]
   then
-    echo "\033[0;31mError: Could not generate lazymc.toml \033[0m"
-    echo "Something went wrong, retry." > server_cfg.txt
+    echo "\033[0;31mError: Could not generate lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
 fi
@@ -187,8 +191,7 @@ fi
 sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
 if [ $? -ne 0 ]
 then
-  echo "\033[0;31mError: Could not update lazymc.toml \033[0m"
-  echo "Something went wrong, retry." > server_cfg.txt
+  echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
   exit 1
 fi
 
@@ -198,7 +201,6 @@ echo ""
 ./lazymc start
 if [ $? -ne 0 ]
 then
-  echo "\033[0;31mError: Could not start the server \033[0m"
-  echo "Something went wrong, retry." > server_cfg.txt
+  echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
   exit 1
 fi
