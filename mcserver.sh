@@ -66,19 +66,9 @@ elif [ "$SERVER_PROVIDER" = "paper" ] || [ "$SERVER_PROVIDER" = "purpur" ] || [ 
 then
     SERVER_TYPE="servers"
 else
-    echo "Invalid server provider value"
-fi
-
-#set the BUILD_FETCH_API value based on SERVER_PROVIDER
-case $SERVER_PROVIDER in
-    "provider1") BUILD_FETCH_API="https://provider1.com/fetch-build";;
-    "provider2") BUILD_FETCH_API="https://provider2.com/fetch-build";;
-    "provider3") BUILD_FETCH_API="https://provider3.com/fetch-build";;
-    *)
-    echo "\033[0;31mError: $SERVER_PROVIDER does not support custom builds number. Exiting... \033[0m" | tee server_cfg.txt
+    echo "\033[0;31mError: $SERVER_PROVIDER is not supported. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
-    ;;
-esac
+fi
 
 # Latest version API - thx to serverjars.com
 API_FETCH_LATEST="serverjars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
@@ -99,6 +89,16 @@ fi
 # GLOBAL FETCH API - thx to serverjars.com
 API_FETCH_JAR="serverjars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
 
+# Set the BUILD_FETCH_API value based on SERVER_PROVIDER
+case $SERVER_PROVIDER in
+    "paper") BUILD_FETCH_API="https://papermc.io/api/v2/projects/paper/versions/${MC_VERSION}/builds/${SERVER_BUILD}";;
+    "purpur") BUILD_FETCH_API="https://api.purpurmc.org/v2/purpur/${MC_VERSION}/${SERVER_BUILD}";;
+    *)
+    echo "\033[0;31mError: $SERVER_PROVIDER does not support custom builds number. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+    ;;
+esac
+
 #TODO Server build handler, new api needed for custom build choice
 if [ ${SERVER_BUILD} = latest ]
 then
@@ -106,16 +106,18 @@ then
   echo "\033[0;33mGetting latest build for ${SERVER_PROVIDER}... \033[0m"
   echo ""
   else
-  # TODO Check if the build exists
+  # Check if the build exists
   echo "\033[0;33mChecking existance of $SERVER_BUILD build for ${SERVER_PROVIDER} \033[0m"
   echo ""
-  status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
+  status_code=$(curl -s -o /dev/null -w '%{http_code}' ${BUILD_FETCH_API})
   if [ "$status_code" -ne 200 ]
   then
     echo "\033[0;31mError: ${SERVER_PROVIDER} $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
 fi
+
+# Set the jar file name
 JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
 
 # TODO END OF MAJOR REIMPLEMENTATION

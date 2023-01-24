@@ -12,8 +12,8 @@ This image provides a basic Minecraft server using one of the supported provider
 - [x] Push updated README to Dockerhub Repo.
 - [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
 - [x] Replace Openjdk with Temurin -> reduced docker image size by 57.52%!
+- [x] Fix fetch when user specifies a build number.
 - [ ] Add flag to disable lazymc.
-- [ ] Fix fetch when user specifies a build number.
 - [ ] Build a webpage for the project.
 - [ ] Automatically update server variables inside lazymc.toml:
   - [x] Jar startup command.
@@ -26,18 +26,15 @@ This image provides a basic Minecraft server using one of the supported provider
   - [ ] Rcon values.
 
 # Supported server providers:
-- [x] Vanilla
-- [x] Paper
-- [x] Purpur
-- [x] Pufferfish
-- [x] Fabric
-- [ ] Arclight
-- [ ] Bukkit
+Wamt more? Let me know in the [issues](https://github.com/Okazakee/mcserver-lazymc-docker/issues).
+- Vanilla
+- Paper
+- Purpur
+- Pufferfish
+- Fabric
 
 # Usage
-It is assumed that the user has already acquired a working Docker installation. If that is not the case, go do that and come back here when you're done.
-
-With this image, you can create a new PaperMC (or alternatives) Minecraft server with one command or a docker compose file.
+It is assumed that the user has already acquired a working Docker installation. If that is not the case, [go do that](https://www.docker.com/get-started/) and come back here when you're done.
 
 `Note that running said command or docker compose indicates agreement to the Minecraft EULA.`
 
