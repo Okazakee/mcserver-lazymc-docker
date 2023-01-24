@@ -2,7 +2,7 @@
 FROM eclipse-temurin:17.0.5_8-jre-jammy
 
 # Environment variables
-ENV CPU_ARCHITECTURE="" \
+ENV CPU_ARCH="" \
     SERVER_PROVIDER="purpur" \
     LAZYMC_VERSION="latest" \
     MC_VERSION="latest" \

@@ -2,7 +2,7 @@
 
 # Check if CPU architecture is set and if it's a correct value
 ACCEPTED_VALUES="armv7 aarch64 x64 x64-static"
-if [ -z "$CPU_ARCHITECTURE" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCHITECTURE"; then
+if [ -z "$CPU_ARCH" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCH"; then
   echo "\033[0;31mError: Please include a valid CPU architecture. Exiting... \033[0m"
   exit 1
 fi
@@ -18,7 +18,7 @@ echo "Minecraft Version= \033[0;33m$MC_VERSION\033[0m" | tee -a server_cfg.txt
 echo "Lazymc version= \033[0;33m$LAZYMC_VERSION\033[0m" | tee -a server_cfg.txt
 echo "Server provider= \033[0;33m$SERVER_PROVIDER\033[0m" | tee -a server_cfg.txt
 echo "Server build= \033[0;33m$SERVER_BUILD\033[0m" | tee -a server_cfg.txt
-echo "CPU architecture= \033[0;33m$CPU_ARCHITECTURE\033[0m" | tee -a server_cfg.txt
+echo "CPU architecture= \033[0;33m$CPU_ARCH\033[0m" | tee -a server_cfg.txt
 echo "Dedicated RAM= \033[0;33m${MC_RAM:-"Not specified."}\033[0m" | tee -a server_cfg.txt
 echo "Java options= \033[0;33m${JAVA_OPTS:-"Not specified."}\033[0m" | tee -a server_cfg.txt
 echo ""
@@ -39,7 +39,7 @@ then
     exit 1
   fi
 fi
-LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSION/lazymc-v$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
+LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSION/lazymc-v$LAZYMC_VERSION-linux-$CPU_ARCH"
 status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
 if [ "$status_code" -ne 302 ]
 then

@@ -43,7 +43,7 @@ With this image, you can create a new PaperMC (or alternatives) Minecraft server
 
 ## Using docker run:
 ```bash
-sudo docker run -p 25565:25565 -e CPU_ARCHITECTURE="<your_cpu_arch>" okazakee/mcserver-lazymc-docker
+sudo docker run -p 25565:25565 -e CPU_ARCH="<your_cpu_arch>" okazakee/mcserver-lazymc-docker
 ```
 While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying more options/envs.
 
@@ -57,7 +57,7 @@ services:
             - '<your-port>:25565'
         container_name: <your-container-name>
         environment:
-            - CPU_ARCHITECTURE=<your-cpu-architecture>
+            - CPU_ARCH=<your-cpu-architecture>
             - SERVER_PROVIDER=<your-server-provider>
             - LAZYMC_VERSION=<your-lazymc-version>
             - MC_VERSION=<your-mc-version>
@@ -107,11 +107,11 @@ Mandatory `ENV` fields will have a `*` after their name.
 
 This image has seven environment variables:
 - CPU Architecture *
-  - **Name:** `CPU_ARCHITECTURE`
+  - **Name:** `CPU_ARCH`
   - Set this to the cpu architecture you want to use.
-  - Usable architectures are: `x64`, `x64-static`, `aarch64`, `armv7`.
+  - Avaliable architectures are: `x64`, `x64-static`, `aarch64`, `armv7`.
   - No default value for this, make sure to include it in the command.
-  - `-e CPU_ARCHITECTURE="<x64>"`
+  - `-e CPU_ARCH="<x64>"`
 - Server Provider
   - **Name:** `SERVER_PROVIDER`
   - Set this to the server provider you want to use.
