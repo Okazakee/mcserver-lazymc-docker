@@ -68,8 +68,8 @@ There are several command line options that users may want to specify when utili
 - Volume
   - Set this to a name for the server's Docker volume (defaults to randomized gibberish).
   - Alternatively, set this to a path to a folder on your computer.
-  - `-v <my_volume_name>:/PaperMC`
-  - `-v </path/to/files>:/PaperMC`
+  - `-v <my_volume_name>:/mcserver`
+  - `-v </path/to/files>:/mcserver`
 - Detached
   - Include this to make the container independent from the current command line.
   - `-d`
