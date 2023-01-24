@@ -58,11 +58,11 @@ chmod +x lazymc
 # TODO MAJOR REIMPLEMENTATION
 
 # Determine server type
-if [ "$SERVER_PROVIDER" == "vanilla" ]; then
+if [ "$SERVER_PROVIDER" = "vanilla" ]; then
     SERVER_TYPE="vanilla"
-elif [ "$SERVER_PROVIDER" == "fabric" ]; then
+elif [ "$SERVER_PROVIDER" = "fabric" ]; then
     SERVER_TYPE="modded"
-elif [ "$SERVER_PROVIDER" == "paper" ] || [ "$SERVER_PROVIDER" == "purpur" ] || [ "$SERVER_PROVIDER" == "pufferfish" ]; then
+elif [ "$SERVER_PROVIDER" = "paper" ] || [ "$SERVER_PROVIDER" = "purpur" ] || [ "$SERVER_PROVIDER" = "pufferfish" ]; then
     SERVER_TYPE="servers"
 else
     echo "Invalid server provider value"
