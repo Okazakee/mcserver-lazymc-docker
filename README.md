@@ -13,7 +13,7 @@ This image provides a basic Minecraft server using one of the supported provider
 - [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
 - [x] Replace Openjdk with Temurin -> reduced docker image size by 57.52%!
 - [ ] Add flag to disable lazymc.
-- [ ] Fix builds fetch if latest is not selected.
+- [ ] Fix fetch when user specifies a build number.
 - [ ] Build a webpage for the project.
 - [ ] Automatically update server variables inside lazymc.toml:
   - [x] Jar startup command.
@@ -110,7 +110,7 @@ This image has seven environment variables:
   - **Name:** `CPU_ARCH`
   - Set this to the cpu architecture you want to use.
   - Avaliable architectures are: `x64`, `x64-static`, `aarch64`, `armv7`.
-  - No default value for this, make sure to include it in the command.
+  - No default value for this, make sure to include it in the command or docker compose.
   - `-e CPU_ARCH="<x64>"`
 - Server Provider
   - **Name:** `SERVER_PROVIDER`
@@ -119,20 +119,20 @@ This image has seven environment variables:
   - `-e SERVER_PROVIDER="<paper>"`
 - Lazymc Version
   - **Name:** `LAZYMC_VERSION`
-  - Set this to the version of `lazymc` you want to use.
-  - If not set, the [latest release](https://github.com/timvisee/lazymc/releases/latest) will be used.
+  - Set this to the version of Lazymc you want to use.
+  - Default value: `latest`.
   - `-e LAZYMC_VERSION="<latest>"`
 - Minecraft Version
   - **Name:** `MC_VERSION`
   - Set this to the Minecraft version that the server should support.
   - Note: there must be a PaperMC (or alternatives) release for the specified version of Minecraft.
-  - If this is not set, the latest version supported by PaperMC (or alternatives) will be used.
+  - Default value: `latest`.
   - Changing this on an existing server will change the version *without wiping the server*.
   - `-e MC_VERSION="<latest>"`
 - Server Build
   - **Name:** `SERVER_BUILD`
   - Set this to the number of the PaperMC (or alternatives) build that the server should use (**not the Minecraft version**).
-  - If this is not set, the latest PaperMC (or alternatives) build for the specified `MC_VERSION` will be used.
+  - Default value: `latest`.
   - Changing this on an existing server will change the version *without wiping the server*.
   - `-e SERVER_BUILD="<latest>"`
 - RAM
