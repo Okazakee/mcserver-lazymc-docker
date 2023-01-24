@@ -6,17 +6,26 @@ This is a Linux Docker image for creating Minecraft servers with `lazymc`.
 This image provides a basic PaperMC (or alternatives) server. All customizations are left to the user.
 
 # To do:
-- [x] Automatically update server variables inside lazymc.toml.
 - [x] Add Docker Compose section in this README.
 - [x] Do not trgger github actions when README or actions yml get pushed.
 - [x] Push updated README to Dockerhub Repo.
 - [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
 - [x] Replace Openjdk with Temurin -> reduced docker image size by 57.52%!
+- [ ] Support for more server providers.
+  - [ ] Vanilla Support.
+  - [ ] Fabric Support.
+  - [ ] Pufferfish Support.
+  - [ ] Arclight Support.
+- [ ] Automatically update server variables inside lazymc.toml.
+  - [x] Jar startup command.
+  - [ ] MC ports for lazymc proxy.
+  - [ ] MC version.
+  - [ ] Wake on start true/false.
+  - [ ] Time before sleep.
+  - [ ] MOTDs for sleeping/starting/stopping states.
+  - [ ] Client messages for starting/stopping states.
+  - [ ] Rcon values.
 - [ ] Add flag to disable lazymc.
-- [ ] Vanilla Support.
-- [ ] Fabric Support.
-- [ ] Pufferfish Support.
-- [ ] Arclight Support.
 - [ ] Build a webpage for the project.
 
 # Usage
