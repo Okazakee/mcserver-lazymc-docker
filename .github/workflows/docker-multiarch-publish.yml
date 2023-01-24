@@ -7,7 +7,8 @@ on:
     paths:
       - '!README.md'
       - '!.gitignore'
-      - '.github/workflows/!*'
+      - '.github/workflows/!docker-multiarch-publish.yml'
+      - '.github/workflows/!dockerhub-description.yml'
       - '*'
   workflow_dispatch: # Manual trigger
 
