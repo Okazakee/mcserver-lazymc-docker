@@ -5,7 +5,7 @@ on:
   push:
     branches: [ master, staging ]
     paths:
-      - '^(?!(README\.md|\.gitignore|\.github/workflows/.*))$).*' -i
+      - '^(?!(README\.md|\.gitignore|\.github/workflows/.*))$).*'
   workflow_dispatch: # Manual trigger
 
 jobs:
