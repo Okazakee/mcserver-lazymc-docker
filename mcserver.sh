@@ -24,6 +24,7 @@ echo "Java options= \033[0;33m${JAVA_OPTS:-"Not specified."}\033[0m" | tee -a se
 echo ""
 echo "\033[0;33mCurrent configuration saved to mcserver/server_cfg.txt \033[0m"
 echo ""
+
 #give user time to read
 sleep 2
 
@@ -50,103 +51,64 @@ fi
 echo "\033[0;33mDownloading lazymc $LAZYMC_VERSION... \033[0m"
 echo ""
 wget -qO lazymc ${LAZYMC_URL}
+
+# Give exec permission to lazymc
 chmod +x lazymc
 
-# Get version information and build download URL and jar name
-case "$SERVER_PROVIDER" in
-  "paper")
-      URL=https://papermc.io/api/v2/projects/paper
-      if [ ${MC_VERSION} = latest ]
-      then
-        # Get the latest MC version
-        echo "\033[0;33mGetting latest Minecraft version... \033[0m"
-        echo ""
-        MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
-        if [ $? -ne 0 ]
-        then
-          echo "\033[0;31mError: Could not get latest version of Minecraft \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-      fi
-      URL=${URL}/versions/${MC_VERSION}
-      if [ ${SERVER_BUILD} = latest ]
-      then
-        # Get the latest build
-        echo "\033[0;33mGetting latest build for Paper... \033[0m"
-        echo ""
-        SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
-        if [ $? -ne 0 ]
-        then
-          echo "\033[0;31mError: Could not get latest build of Paper \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-        else
-        # Check if the build exists
-        echo "\033[0;33mChecking existance of $SERVER_BUILD build for Paper \033[0m"
-        echo ""
-        status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
-        if [ "$status_code" -ne 200 ]
-        then
-          echo "\033[0;31mError: Paper $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-      fi
-      JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-      URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
-      ;;
-  "purpur")
-      URL=https://api.purpurmc.org/v2/purpur/
-      if [ ${MC_VERSION} = latest ]
-      then
-        # Get the latest MC version
-        echo "\033[0;33mGetting latest Minecraft version... \033[0m"
-        echo ""
-        MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]')
-        if [ $? -ne 0 ]
-        then
-          echo "\033[0;31mError: Could not get latest version of Minecraft \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-      fi
-      BUILD_URL=https://api.purpurmc.org/v2/purpur/${MC_VERSION}/
-      if [ ${SERVER_BUILD} = latest ]
-      then
-        # Get the latest build
-        echo "\033[0;33mGetting latest build for Purpur \033[0m"
-        echo ""
-        SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
-        if [ $? -ne 0 ]
-        then
-          echo "\033[0;31mError: Could not get latest build of Purpur \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-        else
-        # Check if the build exists
-        echo "\033[0;33mChecking existance of $SERVER_BUILD build for Purpur \033[0m"
-        echo ""
-        status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}${MC_VERSION}/builds/${SERVER_BUILD})
-        if [ "$status_code" -ne 200 ]
-        then
-          echo "\033[0;31mError: Purpur $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-      fi
+# TODO MAJOR REIMPLEMENTATION
 
-      JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-      URL=${BUILD_URL}${SERVER_BUILD}/download
-      ;;
-  *)
-      echo "\033[0;31mError: $SERVER_PROVIDER is not a valid or currently supported provider. Exiting... \033[0m"
-      echo "Something went wrong, retry." > server_cfg.txt
-      exit 1
-      ;;
-esac
+# Determine server type
+if [ "$SERVER_PROVIDER" == "vanilla" ]; then
+    SERVER_TYPE="vanilla"
+elif [ "$SERVER_PROVIDER" == "fabric" ]; then
+    SERVER_TYPE="modded"
+elif [ "$SERVER_PROVIDER" == "paper" ] || [ "$SERVER_PROVIDER" == "purpur" ] || [ "$SERVER_PROVIDER" == "pufferfish" ]; then
+    SERVER_TYPE="servers"
+else
+    echo "Invalid server provider value"
+fi
+
+# Latest version API - thx to serverjars.com
+API_FETCH_LATEST="serverjars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
+
+# Get the latest MC version
+if [ ${MC_VERSION} = latest ]
+then
+  echo "\033[0;33mGetting latest Minecraft version... \033[0m"
+  echo ""
+  MC_VERSION=$(wget -qO - $API_FETCH_LATEST | jq -r '.response.version')
+  if [ $? -ne 0 ]
+  then
+    echo "\033[0;31mError: Could not get latest version of Minecraft \033[0m"
+    echo "Something went wrong, retry." > server_cfg.txt
+    exit 1
+  fi
+fi
+
+# GLOBAL FETCH API - thx to serverjars.com
+API_FETCH_JAR="serverjars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
+
+#TODO Server build handler, new api needed for custom build choice
+if [ ${SERVER_BUILD} = latest ]
+then
+  # Get the latest build - GIMMICK CODE SINCE MAJOR SCRIPT UPDATE
+  echo "\033[0;33mGetting latest build for ${SERVER_PROVIDER}... \033[0m"
+  echo ""
+  #else
+  # TODO Check if the build exists
+  #echo "\033[0;33mChecking existance of $SERVER_BUILD build for ${SERVER_PROVIDER} \033[0m"
+  #echo ""
+  #status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
+  #if [ "$status_code" -ne 200 ]
+  #then
+    #echo "\033[0;31mError: ${SERVER_PROVIDER} $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m"
+    #echo "Something went wrong, retry." > server_cfg.txt
+    #exit 1
+  #fi
+fi
+JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
+
+# TODO END OF MAJOR REIMPLEMENTATION
 
 # Update jar if necessary
 if [ ! -e ${JAR_NAME} ]
@@ -158,7 +120,7 @@ then
   # Download new server jar
   echo "\033[0;33mDownloading $JAR_NAME \033[0m"
   echo ""
-  if ! curl -f -o ${JAR_NAME} -sS ${URL}
+  if ! curl -f -o ${JAR_NAME} -sS ${API_FETCH_JAR}
   then
     echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m"
     echo "Something went wrong, retry." > server_cfg.txt
