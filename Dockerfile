@@ -1,5 +1,5 @@
 # JRE base
-FROM openjdk:17-slim
+FROM eclipse-temurin:17.0.5_8-jre-jammy
 
 # Environment variables
 ENV CPU_ARCHITECTURE="" \
@@ -22,4 +22,6 @@ CMD ["sh", "./mcserver.sh"]
 # Container setup
 EXPOSE 25565/tcp
 EXPOSE 25565/udp
+EXPOSE 25575/tcp
+EXPOSE 25575/udp
 VOLUME /mcserver
