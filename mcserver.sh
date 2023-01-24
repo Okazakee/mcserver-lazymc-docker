@@ -26,7 +26,7 @@ echo "\033[0;33mCurrent configuration saved to mcserver/server_cfg.txt \033[0m"
 echo ""
 
 #give user time to read
-sleep 2
+sleep 1
 
 # Get lazymc
 if [ "$LAZYMC_VERSION" = "latest" ]
