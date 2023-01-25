@@ -28,32 +28,41 @@ echo ""
 #give user time to read
 sleep 1
 
-# Get lazymc
-if [ "$LAZYMC_VERSION" = "latest" ]
+# Lazymc handler
+lazymc_download() {
+  echo "\033[0;33mDownloading lazymc $LAZYMC_VERSION... \033[0m"
+  echo ""
+  wget -qO lazymc ${LAZYMC_URL}
+  chmod +x lazymc
+}
+
+# URL builder
+if [ "$LAZYMC_VERSION" = "disabled" ]
 then
+  # Skip download
+  echo "\033[0;33mSkipping lazymc download... \033[0m"
+  echo ""
+elif [ "$LAZYMC_VERSION" = "latest" ]
+then
+  # Build latest ver download url
   LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name | cut -c 2-)
   if [ -z "$LAZYMC_VERSION" ]
   then
     echo "\033[0;31mError: Could not get latest version of lazymc. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
+else
+  # Build specified ver download url
+  LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSION/lazymc-v$LAZYMC_VERSION-linux-$CPU_ARCH"
+  status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
+  if [ "$status_code" -ne 302 ]
+  then
+    echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
+  # Download lazymc
+  lazymc_download
 fi
-LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSION/lazymc-v$LAZYMC_VERSION-linux-$CPU_ARCH"
-status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
-if [ "$status_code" -ne 302 ]
-then
-  echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
-  exit 1
-fi
-
-echo "\033[0;33mDownloading lazymc $LAZYMC_VERSION... \033[0m"
-echo ""
-wget -qO lazymc ${LAZYMC_URL}
-
-# Give exec permission to lazymc
-chmod +x lazymc
-
-# TODO MAJOR REIMPLEMENTATION
 
 # Determine server type
 if [ "$SERVER_PROVIDER" = "vanilla" ]
@@ -99,13 +108,13 @@ case $SERVER_PROVIDER in
     ;;
 esac
 
-#TODO Server build handler, new api needed for custom build choice
+#Server build handler
 if [ ${SERVER_BUILD} = latest ]
 then
   # Get the latest build - GIMMICK CODE SINCE MAJOR SCRIPT UPDATE
   echo "\033[0;33mGetting latest build for ${SERVER_PROVIDER}... \033[0m"
   echo ""
-  else
+else
   # Check if the build exists
   echo "\033[0;33mChecking existance of $SERVER_BUILD build for ${SERVER_PROVIDER} \033[0m"
   echo ""
@@ -119,8 +128,6 @@ fi
 
 # Set the jar file name
 JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-
-# TODO END OF MAJOR REIMPLEMENTATION
 
 # Update jar if necessary
 if [ ! -e ${JAR_NAME} ]
@@ -151,7 +158,6 @@ then
       echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m" | tee server_cfg.txt
       exit 1
   fi
-
   # Edit eula.txt to accept the EULA
   echo "\033[0;33mAccepting EULA... \033[0m"
   echo ""
@@ -197,12 +203,25 @@ then
   exit 1
 fi
 
-# Start the server
-echo "\033[0;33mStarting the server! \033[0m"
-echo ""
-./lazymc start
-if [ $? -ne 0 ]
+# Server launch handler
+if [ "$LAZYMC_VERSION" = "disabled" ]
 then
-  echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
-  exit 1
+  # Start directly the server when lazymc is disabled
+  echo "\033[0;33mStarting the server! \033[0m"
+  echo ""
+  java $JAVA_OPTS -jar $JAR_NAME nogui
+  if [ $? -ne 0 ]
+  then
+    echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
+else
+  echo "\033[0;33mStarting the server! \033[0m"
+  echo ""
+  ./lazymc start
+  if [ $? -ne 0 ]
+  then
+    echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
 fi
