@@ -196,6 +196,19 @@ else
   JAVA_OPTS="-Xms512M ${JAVA_OPTS}"
 fi
 
+# Generate lazymc.toml if necessary
+if [ ! -e lazymc.toml ]
+then
+  echo "\033[0;33mGenerating lazymc.toml \033[0m"
+  echo ""
+  ./lazymc config generate
+  if [ $? -ne 0 ]
+  then
+    echo "\033[0;31mError: Could not generate lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
+fi
+
 # Add new values to lazymc.toml
 echo "\033[0;33mUpdating lazymc.toml with latest details... \033[0m"
 echo ""
