@@ -196,32 +196,21 @@ else
   JAVA_OPTS="-Xms512M ${JAVA_OPTS}"
 fi
 
-# Generate lazymc.toml if necessary
-if [ ! -e lazymc.toml ]
+# Add new values to lazymc.toml
+echo "\033[0;33mUpdating lazymc.toml with latest details... \033[0m"
+echo ""
+# Check if the comment is already present in the file
+if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
 then
-  echo "\033[0;33mGenerating lazymc.toml \033[0m"
-  echo ""
-  ./lazymc config generate
-  if [ $? -ne 0 ]
-  then
-    echo "\033[0;31mError: Could not generate lazymc.toml \033[0m"
-    echo "Something went wrong, retry." > server_cfg.txt
-    exit 1
-  fi
-else
-  # Add new values to lazymc.toml
-  echo "\033[0;33mUpdating lazymc.toml with latest details... \033[0m"
-  echo ""
-  # Check if the comment is already present in the file
-  if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
-  then
-    # Add the comment to the file
-    sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
-  fi
-  sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
+  # Add the comment to the file
+  sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
 fi
-
-
+sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
+if [ $? -ne 0 ]
+then
+  echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
+  exit 1
+fi
 
 # Start the server
 echo "\033[0;33mStarting the server! \033[0m"
