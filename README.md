@@ -13,7 +13,7 @@ This image provides a basic Minecraft server using one of the supported provider
 - [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
 - [x] Replace Openjdk with Temurin -> reduced docker image size by 57.52%!
 - [x] Fix fetch when user specifies a build number.
-- [ ] Add flag to disable lazymc.
+- [x] Add flag to disable lazymc.
 - [ ] Build a webpage for the project.
 - [ ] Automatically update server variables inside lazymc.toml:
   - [x] Jar startup command.
@@ -116,7 +116,8 @@ This image has seven environment variables:
   - `-e SERVER_PROVIDER="<paper>"`
 - Lazymc Version
   - **Name:** `LAZYMC_VERSION`
-  - Set this to the version of Lazymc you want to use.
+  - Set this to the version of Lazymc you want to use or disable it if you don't need it.
+  - Avaliable values are: `latest`, `custom-ver` or `disabled`.
   - Default value: `latest`.
   - `-e LAZYMC_VERSION="<latest>"`
 - Minecraft Version
