@@ -104,13 +104,13 @@ then
 fi
 
 # FETCH JAR API - thx to serverjars.com
-API_FETCH_JAR="serverjars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
+API_FETCH_JAR="https://serverjars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
 
 # Set the BUILD_FETCH_API value based on SERVER_PROVIDER
 case $SERVER_PROVIDER in
     "paper") BUILD_FETCH_API="https://papermc.io/api/v2/projects/paper/versions/${MC_VERSION}/builds/${SERVER_BUILD}";;
     "purpur") BUILD_FETCH_API="https://api.purpurmc.org/v2/purpur/${MC_VERSION}/${SERVER_BUILD}";;
-    *) echo "Skipping build check because $SERVER_PROVIDER does not support custom builds number"
+    *) echo "\033[0;33mSkipping build check because $SERVER_PROVIDER does not support custom builds number \033[0m"
        echo "";;
 esac
 
