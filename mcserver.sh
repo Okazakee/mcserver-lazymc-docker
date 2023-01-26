@@ -72,10 +72,10 @@ allowed_servers_type=("paper" "purpur" "pufferfish")
 if [ "$SERVER_PROVIDER" = "vanilla" ]
 then
     SERVER_TYPE="vanilla"
-elif [[ " ${allowed_modded_type[*]} " == *"$SERVER_PROVIDER"* ]]
+elif [ "${allowed_modded_type[*]}" == *"$SERVER_PROVIDER"* ]
 then
     SERVER_TYPE="modded"
-elif [[ " ${allowed_servers_type[*]} " == *"$SERVER_PROVIDER"* ]]
+elif [ "${allowed_servers_type[*]}" == *"$SERVER_PROVIDER"* ]
 then
     SERVER_TYPE="servers"
 else
