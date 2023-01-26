@@ -1,0 +1,37 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Extract version number
+      run: |
+        VERSION=$(echo $GITHUB_REF | cut -d '/' -f 3)
+        MAJOR=$(echo $VERSION | cut -d '.' -f 1)
+        MINOR=$(echo $VERSION | cut -d '.' -f 2)
+        PATCH=$(echo $VERSION | cut -d '.' -f 3)
+
+    - name: Create release
+      uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.VERSION }}
+        release_name: ${{ env.VERSION }}
+        prerelease: ${{ env.MINOR != '0'}}
+    - name: Archiving the source code
+      run: tar -czvf source-code.tar.gz ./* --exclude=node_modules --exclude=dist --exclude=build
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: source-code.tar.gz
+        path
