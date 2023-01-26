@@ -3,6 +3,11 @@ on:
   push:
     tags:
       - 'v*.*.*'
+    branches:
+      - 'main'
+    paths:
+      - '*'
+    if: startsWith(github.ref, 'refs/tags/')
 
 jobs:
   build:
