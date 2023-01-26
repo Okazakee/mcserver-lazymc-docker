@@ -79,23 +79,31 @@ else
     exit 1
 fi
 
-# Latest version API - thx to serverjars.com
-API_FETCH_LATEST="serverjars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
+# FETCH LATEST VER API - thx to serverjars.com
+API_FETCH_LATEST="https://serverjars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
+# FETCH VER DETAILS API - thx to serverjars.com
+API_FETCH_DETAILS="https://serverjars.com/api/fetchDetails/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
 
 # Get the latest MC version
 if [ ${MC_VERSION} = latest ]
 then
   echo "\033[0;33mGetting latest Minecraft version... \033[0m"
   echo ""
-  MC_VERSION=$(wget -qO - $API_FETCH_LATEST | jq -r '.response.version')
-  if [ $? -ne 0 ]
+  if ! MC_VERSION=$(wget -qO - $API_FETCH_LATEST | jq -r '.response.version')
   then
     echo "\033[0;31mError: Could not get latest version of Minecraft. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
+  else
+  # Check if the version exists
+  if ! [ ${MC_VERSION} = "$(wget -qO - $API_FETCH_DETAILS | jq -r '.response.version')" ]
+  then
+    echo "\033[0;31mError: Minecraft version $MC_VERSION version does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
 fi
 
-# GLOBAL FETCH API - thx to serverjars.com
+# FETCH JAR API - thx to serverjars.com
 API_FETCH_JAR="serverjars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
 
 # Set the BUILD_FETCH_API value based on SERVER_PROVIDER
@@ -137,7 +145,7 @@ then
   # Download new server jar
   echo "\033[0;33mDownloading $JAR_NAME \033[0m"
   echo ""
-  if ! curl -f -o ${JAR_NAME} -sS ${API_FETCH_JAR}
+  if ! curl -o ${JAR_NAME} -sS ${API_FETCH_JAR}
   then
     echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
@@ -150,8 +158,7 @@ then
   # Run the server once to generate eula.txt
   echo "\033[0;33mGenerating EULA... \033[0m"
   echo ""
-  java -jar ${JAR_NAME} > /dev/null 2>&1
-  if [ $? -ne 0 ]
+  if ! java -jar ${JAR_NAME} > /dev/null 2>&1
   then
       echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m" | tee server_cfg.txt
       exit 1
@@ -173,12 +180,11 @@ else
 fi
 
 # Generate lazymc.toml if necessary
-if [ ! -e lazymc.toml ]
+if [ ! -e lazymc.toml ] && [ ! "$LAZYMC_VERSION" = "disabled" ]
 then
   echo "\033[0;33mGenerating lazymc.toml \033[0m"
   echo ""
-  ./lazymc config generate
-  if [ $? -ne 0 ]
+  if ! ./lazymc config generate
   then
     echo "\033[0;31mError: Could not generate lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
@@ -186,19 +192,21 @@ then
 fi
 
 # Add new values to lazymc.toml
-echo "\033[0;33mUpdating lazymc.toml with latest details... \033[0m"
-echo ""
-# Check if the comment is already present in the file
-if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
+if [ ! "$LAZYMC_VERSION" = "disabled" ]
 then
-  # Add the comment to the file
-  sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
-fi
-sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
-if [ $? -ne 0 ]
-then
-  echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
-  exit 1
+  echo "\033[0;33mUpdating lazymc.toml with latest details... \033[0m"
+  echo ""
+  # Check if the comment is already present in the file
+  if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
+  then
+    # Add the comment to the file
+    sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
+  fi
+  if ! sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
+  then
+    echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
 fi
 
 # Server launch handler
@@ -207,8 +215,7 @@ then
   # Start directly the server when lazymc is disabled
   echo "\033[0;33mStarting the server! \033[0m"
   echo ""
-  java $JAVA_OPTS -jar $JAR_NAME nogui
-  if [ $? -ne 0 ]
+  if ! java $JAVA_OPTS -jar $JAR_NAME nogui
   then
     echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
@@ -216,8 +223,7 @@ then
 else
   echo "\033[0;33mStarting the server! \033[0m"
   echo ""
-  ./lazymc start
-  if [ $? -ne 0 ]
+  if ! ./lazymc start
   then
     echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
