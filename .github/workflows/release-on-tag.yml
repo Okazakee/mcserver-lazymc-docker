@@ -1,13 +1,8 @@
 name: Release
 on:
   push:
-    tags:
-      - 'v*.*.*'
-    branches:
-      - 'main'
     paths:
-      - '*'
-    if: startsWith(github.ref, 'refs/tags/')
+      - 'changelog.md'
 
 jobs:
   build:
@@ -16,29 +11,20 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Validate tag name
+    - name: Extract version number and date from changelog
       run: |
-        if ! echo $GITHUB_REF | grep -q "^refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
-          echo "Invalid tag name, the job will stop"
-          exit 1
-        fi
-    - name: Extract version number
-      run: |
-        VERSION=$(echo $GITHUB_REF | cut -d '/' -f 3)
-        MAJOR=$(echo $VERSION | cut -d '.' -f 1)
-        MINOR=$(echo $VERSION | cut -d '.' -f 2)
-        PATCH=$(echo $VERSION | cut -d '.' -f 3)
-
+        CHANGELOG_VERSION=$(grep -oP "## \K([0-9]+\.[0-9]+\.[0-9]+)" changelog.md)
+        CHANGELOG_DATE=$(grep -oP "## [0-9]+\.[0-9]+\.[0-9]+ \([0-9]{2}-[0-9]{2}-[0-9]{4}\) " -m 1 changelog.md | awk '{print $2}')
+        echo "Extracted version: ${CHANGELOG_VERSION} and date: ${CHANGELOG_DATE} from changelog"
     - name: Create release
       uses: actions/create-release@v1
       id: create_release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.VERSION }}
-        release_name: ${{ env.VERSION }}
-        prerelease: ${{ env.MINOR != '0'}}
+        tag_name: ${{ env.CHANGELOG_VERSION }}
+        release_name: ${{ env.CHANGELOG_VERSION }}-${{ env.CHANGELOG_DATE }}
+        prerelease: false
     - name: Archiving the source code
       run: tar -czvf source-code.tar.gz ./* --exclude=node_modules --exclude=dist --exclude=build
     - name: Upload artifact

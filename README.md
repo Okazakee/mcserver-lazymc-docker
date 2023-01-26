@@ -11,7 +11,6 @@ Wamt more? Let me know in the [issues](https://github.com/Okazakee/mcserver-lazy
 - Vanilla
 - Paper
 - Purpur
-- Pufferfish
 - Fabric
 
 # Usage

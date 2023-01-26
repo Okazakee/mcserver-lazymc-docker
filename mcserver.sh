@@ -67,7 +67,7 @@ fi
 
 # Declaring supported types
 allowed_modded_type="fabric"
-allowed_servers_type="paper purpur pufferfish"
+allowed_servers_type="paper purpur"
 
 # Determine server type
 if [ "$SERVER_PROVIDER" = "vanilla" ]
