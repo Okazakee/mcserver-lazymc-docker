@@ -3,8 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# wip md
+# stuff
 wip.md
+mcserver/
 
 # User-specific files
 *.suo

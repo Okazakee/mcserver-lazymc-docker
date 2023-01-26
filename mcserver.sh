@@ -102,10 +102,8 @@ API_FETCH_JAR="serverjars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${M
 case $SERVER_PROVIDER in
     "paper") BUILD_FETCH_API="https://papermc.io/api/v2/projects/paper/versions/${MC_VERSION}/builds/${SERVER_BUILD}";;
     "purpur") BUILD_FETCH_API="https://api.purpurmc.org/v2/purpur/${MC_VERSION}/${SERVER_BUILD}";;
-    *)
-    echo "\033[0;31mError: $SERVER_PROVIDER does not support custom builds number. Exiting... \033[0m" | tee server_cfg.txt
-    exit 1
-    ;;
+    *) echo "Skipping build check because $SERVER_PROVIDER does not support custom builds number"
+       echo "";;
 esac
 
 #Server build handler
