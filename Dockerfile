@@ -17,7 +17,7 @@ RUN apt update \
     && mkdir /mcserver
 
 # Start script
-CMD ["sh", "./mcserver.sh"]
+CMD ["bash", "./mcserver.sh"]
 
 # Container setup
 EXPOSE 25565/tcp
