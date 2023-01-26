@@ -64,14 +64,18 @@ else
   lazymc_download
 fi
 
+# Declaring supported types
+allowed_modded_type=("fabric")
+allowed_servers_type=("paper" "purpur" "pufferfish")
+
 # Determine server type
 if [ "$SERVER_PROVIDER" = "vanilla" ]
 then
     SERVER_TYPE="vanilla"
-elif [ "$SERVER_PROVIDER" = "fabric" ]
+elif [[ " ${allowed_modded_type[*]} " == *"$SERVER_PROVIDER"* ]]
 then
     SERVER_TYPE="modded"
-elif [ "$SERVER_PROVIDER" = "paper" ] || [ "$SERVER_PROVIDER" = "purpur" ] || [ "$SERVER_PROVIDER" = "pufferfish" ]
+elif [[ " ${allowed_servers_type[*]} " == *"$SERVER_PROVIDER"* ]]
 then
     SERVER_TYPE="servers"
 else
@@ -117,7 +121,7 @@ esac
 #Server build handler
 if [ ${SERVER_BUILD} = latest ]
 then
-  # Get the latest build - GIMMICK CODE SINCE MAJOR SCRIPT UPDATE
+  # Get the latest build - GIMMICK CHECK CODE SINCE MAJOR SCRIPT UPDATE
   echo "\033[0;33mGetting latest build for ${SERVER_PROVIDER}... \033[0m"
   echo ""
 else
