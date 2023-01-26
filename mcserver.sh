@@ -2,7 +2,8 @@
 
 # Check if CPU architecture is set and if it's a correct value
 ACCEPTED_VALUES="armv7 aarch64 x64 x64-static"
-if [ -z "$CPU_ARCH" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCH"; then
+if [ -z "$CPU_ARCH" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCH"
+then
   echo "\033[0;31mError: Please include a valid CPU architecture. Exiting... \033[0m"
   exit 1
 fi
@@ -65,17 +66,17 @@ else
 fi
 
 # Declaring supported types
-allowed_modded_type=("fabric")
-allowed_servers_type=("paper" "purpur" "pufferfish")
+allowed_modded_type="fabric"
+allowed_servers_type="paper purpur pufferfish"
 
 # Determine server type
 if [ "$SERVER_PROVIDER" = "vanilla" ]
 then
     SERVER_TYPE="vanilla"
-elif [[ " ${allowed_modded_type[*]} " == *"$SERVER_PROVIDER"* ]]
+elif [ -z "$SERVER_PROVIDER" ] || echo "$allowed_modded_type" | grep -wq "$SERVER_PROVIDER"
 then
     SERVER_TYPE="modded"
-elif [[ " ${allowed_servers_type[*]} " == *"$SERVER_PROVIDER"* ]]
+elif [ -z "$SERVER_PROVIDER" ] || echo "$allowed_servers_type" | grep -wq "$SERVER_PROVIDER"
 then
     SERVER_TYPE="servers"
 else
@@ -146,14 +147,15 @@ then
   echo "\033[0;33mRemoving old server jars... \033[0m"
   echo ""
   rm -f *.jar
-  # Download new server jar
-  echo "\033[0;33mDownloading $JAR_NAME \033[0m"
-  echo ""
-  if ! curl -o ${JAR_NAME} -sS ${API_FETCH_JAR}
-  then
-    echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
-    exit 1
-  fi
+fi
+
+# Download new server jar
+echo "\033[0;33mDownloading $JAR_NAME \033[0m"
+echo ""
+if ! curl -o ${JAR_NAME} -sS ${API_FETCH_JAR}
+then
+  echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
+  exit 1
 fi
 
 # If this is the first run, accept the EULA
