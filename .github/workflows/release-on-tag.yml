@@ -17,6 +17,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Validate tag name
+      run: |
+        if ! echo $GITHUB_REF | grep -q "^refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
+          echo "Invalid tag name, the job will stop"
+          exit 1
+        fi
     - name: Extract version number
       run: |
         VERSION=$(echo $GITHUB_REF | cut -d '/' -f 3)
@@ -39,4 +45,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: source-code.tar.gz
-        path
+        path: source-code
