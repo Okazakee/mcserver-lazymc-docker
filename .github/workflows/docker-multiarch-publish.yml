@@ -7,11 +7,9 @@ on:
     paths:
       - '*'
       - '!LICENSE'
-      - '!SECURITY.md'
-      - '!README.md'
-      - '!changelog.md'
+      - '!*.md'
       - '!\.gitignore'
-      - '!\.github/workflows/*'
+      - '!\.github/*'
   workflow_dispatch: # Manual trigger
 
 jobs:
