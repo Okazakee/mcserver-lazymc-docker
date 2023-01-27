@@ -8,7 +8,7 @@
 - Created more github actions to automate releases and docker build updates.
 - Updated Readme with more sections.
 - Swapped OpenJDK for Temurin, reducing docker image size by 57.52%!
-- Switcher default provider to `purpur`.
+- Switched default provider to `purpur`.
 - Completely reworked the main script:
     - New providers support: `vanilla`, `purpur`, `fabric`.
     - New settings recap on script start
