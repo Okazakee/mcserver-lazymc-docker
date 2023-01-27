@@ -1,5 +1,7 @@
 # To do:
-- [ ] Fix changelog release action
+- [ ] Make stopping the container launch "stop" command in server if possible.
+- [ ] Find something to do with [cardboard](https://github.com/CardboardPowered/cardboard).
+- [ ] Fix changelog release action.
 - [ ] Automatically update server variables inside lazymc.toml:
   - [x] Jar startup command.
   - [ ] MC ports for lazymc proxy.
