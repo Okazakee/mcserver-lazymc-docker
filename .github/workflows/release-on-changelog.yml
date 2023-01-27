@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Get Changelog
       id: get_changelog
       run: |
@@ -18,8 +20,8 @@ jobs:
     - name: Extract version number
       id: version_number
       run: |
-        VERSION=$(grep -m 1 -o '## \d*\.\d*\.\d*' changelog.md | awk '{print $2}')
-        echo "::set-output name=version::$VERSION"
+        VERSION=$(sed -n 's/## ([0-9.])./\1/p' changelog.md | head -n 1)
+echo "::set-output name=version::$VERSION"
 
     - name: Create Release
       id: create_release
