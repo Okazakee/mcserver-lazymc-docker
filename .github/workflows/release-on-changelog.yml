@@ -14,14 +14,10 @@ jobs:
     - name: Get Changelog
       id: get_changelog
       run: |
-        CHANGELOG=$(cat changelog.md)
-        echo "::set-output name=changelog::$CHANGELOG"
-
-    - name: Extract version number
-      id: version_number
-      run: |
         VERSION=$(sed -n 's/## \([0-9.]*\).*/\1/p' changelog.md | head -n 1)
         echo "::set-output name=version::$VERSION"
+        CHANGELOG=$(grep -A1000 "## $VERSION" changelog.md)
+        echo "::set-output name=changelog::$CHANGELOG"
 
     - name: Create Release
       id: create_release
@@ -29,8 +25,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
       with:
-        tag_name: ${{ steps.version_number.outputs.version }}
-        release_name: Release ${{ steps.version_number.outputs.version }}
+        tag_name: ${{ steps.get_changelog.outputs.version }}
+        release_name: Release ${{ steps.get_changelog.outputs.version }}
         body: ${{ steps.get_changelog.outputs.changelog }}
         draft: false
         prerelease: false
