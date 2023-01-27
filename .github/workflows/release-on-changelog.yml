@@ -20,8 +20,8 @@ jobs:
     - name: Extract version number
       id: version_number
       run: |
-        VERSION=$(sed -n 's/## ([0-9.])./\1/p' changelog.md | head -n 1)
-echo "::set-output name=version::$VERSION"
+        VERSION=$(sed -n 's/## \([0-9.]*\).*/\1/p' changelog.md | head -n 1)
+        echo "::set-output name=version::$VERSION"
 
     - name: Create Release
       id: create_release
