@@ -1,0 +1,36 @@
+name: Release
+on:
+  push:
+    paths:
+      - 'changelog.md'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Get Changelog
+      id: get_changelog
+      run: |
+        CHANGELOG=$(cat changelog.md)
+        echo "::set-output name=changelog::$CHANGELOG"
+
+    - name: Extract version number
+      id: version_number
+      run: |
+        VERSION=$(sed -n 's/## ([0-9.])./\1/p' changelog.md | head -n 1)
+echo "::set-output name=version::$VERSION"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1.1.4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+      with:
+        tag_name: ${{ steps.version_number.outputs.version }}
+        release_name: Release ${{ steps.version_number.outputs.version }}
+        body: ${{ steps.get_changelog.outputs.changelog }}
+        draft: false
+        prerelease: false

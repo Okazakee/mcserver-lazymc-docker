@@ -1,9 +1,9 @@
 # JRE base
-FROM eclipse-temurin:17.0.5_8-jre-jammy
+FROM eclipse-temurin:19-jre-jammy
 
 # Environment variables
-ENV CPU_ARCHITECTURE="" \
-    SERVER_PROVIDER="paper" \
+ENV CPU_ARCH="" \
+    SERVER_PROVIDER="purpur" \
     LAZYMC_VERSION="latest" \
     MC_VERSION="latest" \
     SERVER_BUILD="latest" \

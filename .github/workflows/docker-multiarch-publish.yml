@@ -5,7 +5,11 @@ on:
   push:
     branches: [ master, staging ]
     paths:
-      - '^(?!(README\.md|\.gitignore|\.github/workflows/*))'
+      - '*'
+      - '!README.md'
+      - '!changelog.md'
+      - '!\.gitignore'
+      - '!\.github/workflows/*'
   workflow_dispatch: # Manual trigger
 
 jobs:

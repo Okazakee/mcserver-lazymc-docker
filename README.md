@@ -1,36 +1,26 @@
 # Minecraft Servers w/ `lazymc` using Docker
 This is a Linux Docker image for creating Minecraft servers with `lazymc`.
 
-[lazymc](https://github.com/timvisee/lazymc) is a utility that puts your Minecraft server to rest when idle and wakes it up when players try to connect. This allows the server to not waste resources if nobody is connected.
+[lazymc](https://github.com/timvisee/lazymc) is a utility that puts your Minecraft server to rest when idle and wakes it up when players try to connect.
+This allows the server to not waste resources if nobody is connected.
 
-This image provides a basic PaperMC (or alternatives) server. All customizations are left to the user.
+This image provides a basic Minecraft server using one of the supported providers. All customizations are left to the user.
 
-# To do:
-- [x] Automatically update server variables inside lazymc.toml.
-- [x] Add Docker Compose section in this README.
-- [x] Do not trgger github actions when README or actions yml get pushed.
-- [x] Push updated README to Dockerhub Repo.
-- [x] Better logging, remove useless console outputs and give the user clear and clean messages of what is going on.
-- [x] Replace Openjdk with Temurin -> reduced docker image size by 57.52%!
-- [ ] Add flag to disable lazymc.
-- [ ] Vanilla Support.
-- [ ] Fabric Support.
-- [ ] Pufferfish Support.
-- [ ] Arclight Support.
-- [ ] Build a webpage for the project.
+# Supported server providers:
+Wamt more? Let me know in the [issues](https://github.com/Okazakee/mcserver-lazymc-docker/issues).
+- Vanilla
+- Paper
+- Purpur
+- Fabric
 
 # Usage
-It is assumed that the user has already acquired a working Docker installation. If that is not the case, go do that and come back here when you're done.
-
-With this image, you can create a new PaperMC (or alternatives) Minecraft server with one command or a docker compose file.
+It is assumed that the user has already acquired a working Docker installation. If that is not the case, [go do that](https://www.docker.com/get-started/) and come back here when you're done.
 
 `Note that running said command or docker compose indicates agreement to the Minecraft EULA.`
 
-### Here is an example:
-
 ## Using docker run:
 ```bash
-sudo docker run -p 25565:25565 -e CPU_ARCHITECTURE="<your_cpu_arch>" okazakee/mcserver-lazymc-docker
+sudo docker run -p 25565:25565 -e CPU_ARCH="<your_cpu_arch>" okazakee/mcserver-lazymc-docker
 ```
 While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying more options/envs.
 
@@ -44,7 +34,7 @@ services:
             - '<your-port>:25565'
         container_name: <your-container-name>
         environment:
-            - CPU_ARCHITECTURE=<your-cpu-architecture>
+            - CPU_ARCH=<your-cpu-architecture>
             - SERVER_PROVIDER=<your-server-provider>
             - LAZYMC_VERSION=<your-lazymc-version>
             - MC_VERSION=<your-mc-version>
@@ -55,7 +45,6 @@ services:
             - '<your-volume-or-path>:/mcserver'
         image: okazakee/mcserver-lazymc-docker:<latest/staging>
 ```
-
 
 ## Options
 There are several command line options that users may want to specify when utilizing this image. These options are listed below with some brief explanation. An example will be provided with each. In the example, the part that the user can change will be surrounded by angle brackets (`< >`). Remember to *remove the angle brackets* before running the command.
@@ -94,36 +83,36 @@ Environment variables are options that are specified in the format `-e <NAME>="<
 Mandatory `ENV` fields will have a `*` after their name.
 
 This image has seven environment variables:
+- CPU Architecture *
+  - **Name:** `CPU_ARCH`
+  - Set this to the cpu architecture you want to use.
+  - Avaliable architectures are: `x64`, `x64-static`, `aarch64`, `armv7`.
+  - No default value for this, make sure to include it in the command or docker compose.
+  - `-e CPU_ARCH="<x64>"`
 - Server Provider
   - **Name:** `SERVER_PROVIDER`
   - Set this to the server provider you want to use.
-  - Selectable providers are: `paper`, `purpur`.
-  - Default value: `paper`.
+  - Default value: `purpur`.
   - `-e SERVER_PROVIDER="<paper>"`
-- CPU Architecture *
-  - **Name:** `CPU_ARCHITECTURE`
-  - Set this to the cpu architecture you want to use.
-  - Selectable architectures are: `x64`, `x64-static`, `aarch64`, `armv7`.
-  - No default value for this, make sure to include it in the command.
-  - `-e CPU_ARCHITECTURE="<x64>"`
+- Lazymc Version
+  - **Name:** `LAZYMC_VERSION`
+  - Set this to the version of Lazymc you want to use or disable it if you don't need it.
+  - Avaliable values are: `latest`, `custom-ver` or `disabled`.
+  - Default value: `latest`.
+  - `-e LAZYMC_VERSION="<latest>"`
 - Minecraft Version
   - **Name:** `MC_VERSION`
   - Set this to the Minecraft version that the server should support.
   - Note: there must be a PaperMC (or alternatives) release for the specified version of Minecraft.
-  - If this is not set, the latest version supported by PaperMC (or alternatives) will be used.
+  - Default value: `latest`.
   - Changing this on an existing server will change the version *without wiping the server*.
   - `-e MC_VERSION="<latest>"`
 - Server Build
   - **Name:** `SERVER_BUILD`
   - Set this to the number of the PaperMC (or alternatives) build that the server should use (**not the Minecraft version**).
-  - If this is not set, the latest PaperMC (or alternatives) build for the specified `MC_VERSION` will be used.
+  - Default value: `latest`.
   - Changing this on an existing server will change the version *without wiping the server*.
   - `-e SERVER_BUILD="<latest>"`
-- Lazymc Version
-  - **Name:** `LAZYMC_VERSION`
-  - Set this to the version of `lazymc` you want to use.
-  - If not set, the [latest release](https://github.com/timvisee/lazymc/releases/latest) will be used.
-  - `-e LAZYMC_VERSION="<latest>"`
 - RAM
   - **Name:** `MC_RAM`
   - Set this to the amount of RAM the server can use.
@@ -141,8 +130,13 @@ This image has seven environment variables:
 From this point, the server should be configured in the same way as any other Minecraft server. The server's files, including `server.properties`, can be found in the volume that was specified earlier. The port that was specified earlier will probably need to be forwarded as well. For details on how to do this and other such configuration, Google it, because it works the same as any other Minecraft server.
 ### Suggested repo for optimizing your settings: [YouHaveTrouble/minecraft-optimization](https://github.com/YouHaveTrouble/minecraft-optimization)
 
+## Thanks to:
+- [ServerJars](serverjars.com) - They're API helped me a lot massively reducing my codebase size.
+- [Timvisee](https://github.com/timvisee) - Lead developer of Lazymc.
+- [Crbanman's Repo](https://github.com/crbanman/papermc-lazymc-docker) - Original fork on which this project is based of.
+- [Contributors](https://github.com/Okazakee/mcserver-lazymc-docker/graphs/contributors) - Thanks to everybody who has or will help with this project.
 
-# Technical
+## Technical
 This project *does **NOT** redistribute the Minecraft server files*.
 
 **PLEASE NOTE:** This is an unofficial project. I did not create PaperMC or other providers.

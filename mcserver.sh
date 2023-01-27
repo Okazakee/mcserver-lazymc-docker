@@ -2,7 +2,8 @@
 
 # Check if CPU architecture is set and if it's a correct value
 ACCEPTED_VALUES="armv7 aarch64 x64 x64-static"
-if [ -z "$CPU_ARCHITECTURE" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCHITECTURE"; then
+if [ -z "$CPU_ARCH" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCH"
+then
   echo "\033[0;31mError: Please include a valid CPU architecture. Exiting... \033[0m"
   exit 1
 fi
@@ -18,135 +19,126 @@ echo "Minecraft Version= \033[0;33m$MC_VERSION\033[0m" | tee -a server_cfg.txt
 echo "Lazymc version= \033[0;33m$LAZYMC_VERSION\033[0m" | tee -a server_cfg.txt
 echo "Server provider= \033[0;33m$SERVER_PROVIDER\033[0m" | tee -a server_cfg.txt
 echo "Server build= \033[0;33m$SERVER_BUILD\033[0m" | tee -a server_cfg.txt
-echo "CPU architecture= \033[0;33m$CPU_ARCHITECTURE\033[0m" | tee -a server_cfg.txt
+echo "CPU architecture= \033[0;33m$CPU_ARCH\033[0m" | tee -a server_cfg.txt
 echo "Dedicated RAM= \033[0;33m${MC_RAM:-"Not specified."}\033[0m" | tee -a server_cfg.txt
 echo "Java options= \033[0;33m${JAVA_OPTS:-"Not specified."}\033[0m" | tee -a server_cfg.txt
 echo ""
 echo "\033[0;33mCurrent configuration saved to mcserver/server_cfg.txt \033[0m"
 echo ""
-#give user time to read
-sleep 2
 
-# Get lazymc
-if [ "$LAZYMC_VERSION" = "latest" ]
+#give user time to read
+sleep 1
+
+# Lazymc handler
+lazymc_download() {
+  echo "\033[0;33mDownloading lazymc $LAZYMC_VERSION... \033[0m"
+  echo ""
+  wget -qO lazymc ${LAZYMC_URL}
+  chmod +x lazymc
+}
+
+# URL builder
+if [ "$LAZYMC_VERSION" = "disabled" ]
 then
+  # Skip download
+  echo "\033[0;33mSkipping lazymc download... \033[0m"
+  echo ""
+elif [ "$LAZYMC_VERSION" = "latest" ]
+then
+  # Build latest ver download url
   LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name | cut -c 2-)
   if [ -z "$LAZYMC_VERSION" ]
   then
-    echo "\033[0;31mError: Could not get latest version of lazymc. Exiting... \033[0m"
-    echo "Something went wrong, retry." > server_cfg.txt
+    echo "\033[0;31mError: Could not get latest version of lazymc. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
+else
+  # Build specified ver download url
+  LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSION/lazymc-v$LAZYMC_VERSION-linux-$CPU_ARCH"
+  status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
+  if [ "$status_code" -ne 302 ]
+  then
+    echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
+  # Download lazymc
+  lazymc_download
+fi
+
+# Declaring supported types
+allowed_modded_type="fabric"
+allowed_servers_type="paper purpur"
+
+# Determine server type
+if [ "$SERVER_PROVIDER" = "vanilla" ]
+then
+    SERVER_TYPE="vanilla"
+elif [ -z "$SERVER_PROVIDER" ] || echo "$allowed_modded_type" | grep -wq "$SERVER_PROVIDER"
+then
+    SERVER_TYPE="modded"
+elif [ -z "$SERVER_PROVIDER" ] || echo "$allowed_servers_type" | grep -wq "$SERVER_PROVIDER"
+then
+    SERVER_TYPE="servers"
+else
+    echo "\033[0;31mError: $SERVER_PROVIDER is not supported. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+fi
+
+# FETCH LATEST VER API - thx to serverjars.com
+API_FETCH_LATEST="https://serverjars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
+# FETCH VER DETAILS API - thx to serverjars.com
+API_FETCH_DETAILS="https://serverjars.com/api/fetchDetails/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
+
+# Get the latest MC version
+if [ ${MC_VERSION} = latest ]
+then
+  echo "\033[0;33mGetting latest Minecraft version... \033[0m"
+  echo ""
+  if ! MC_VERSION=$(wget -qO - $API_FETCH_LATEST | jq -r '.response.version')
+  then
+    echo "\033[0;31mError: Could not get latest version of Minecraft. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
+  else
+  # Check if the version exists
+  if ! [ ${MC_VERSION} = "$(wget -qO - $API_FETCH_DETAILS | jq -r '.response.version')" ]
+  then
+    echo "\033[0;31mError: Minecraft version $MC_VERSION version does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
 fi
-LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSION/lazymc-v$LAZYMC_VERSION-linux-$CPU_ARCHITECTURE"
-status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
-if [ "$status_code" -ne 302 ]
+
+# FETCH JAR API - thx to serverjars.com
+API_FETCH_JAR="https://serverjars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
+
+# Set the BUILD_FETCH_API value based on SERVER_PROVIDER
+case $SERVER_PROVIDER in
+    "paper") BUILD_FETCH_API="https://papermc.io/api/v2/projects/paper/versions/${MC_VERSION}/builds/${SERVER_BUILD}";;
+    "purpur") BUILD_FETCH_API="https://api.purpurmc.org/v2/purpur/${MC_VERSION}/${SERVER_BUILD}";;
+    *) echo "\033[0;33mSkipping build check because $SERVER_PROVIDER does not support custom builds number \033[0m"
+       echo "";;
+esac
+
+#Server build handler
+if [ ${SERVER_BUILD} = latest ]
 then
-  echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m"
-  echo "Something went wrong, retry." > server_cfg.txt
-  exit 1
+  # Get the latest build - GIMMICK CHECK CODE SINCE MAJOR SCRIPT UPDATE
+  echo "\033[0;33mGetting latest build for ${SERVER_PROVIDER}... \033[0m"
+  echo ""
+else
+  # Check if the build exists
+  echo "\033[0;33mChecking existance of $SERVER_BUILD build for ${SERVER_PROVIDER} \033[0m"
+  echo ""
+  status_code=$(curl -s -o /dev/null -w '%{http_code}' ${BUILD_FETCH_API})
+  if [ "$status_code" -ne 200 ]
+  then
+    echo "\033[0;31mError: ${SERVER_PROVIDER} $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
 fi
 
-echo "\033[0;33mDownloading lazymc $LAZYMC_VERSION... \033[0m"
-echo ""
-wget -qO lazymc ${LAZYMC_URL}
-chmod +x lazymc
-
-# Get version information and build download URL and jar name
-case "$SERVER_PROVIDER" in
-  "paper")
-      URL=https://papermc.io/api/v2/projects/paper
-      if [ ${MC_VERSION} = latest ]
-      then
-        # Get the latest MC version
-        echo "\033[0;33mGetting latest Minecraft version... \033[0m"
-        echo ""
-        MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
-        if [ $? -ne 0 ]
-        then
-          echo "\033[0;31mError: Could not get latest version of Minecraft \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-      fi
-      URL=${URL}/versions/${MC_VERSION}
-      if [ ${SERVER_BUILD} = latest ]
-      then
-        # Get the latest build
-        echo "\033[0;33mGetting latest build for Paper... \033[0m"
-        echo ""
-        SERVER_BUILD=$(wget -qO - $URL | jq '.builds[-1]')
-        if [ $? -ne 0 ]
-        then
-          echo "\033[0;31mError: Could not get latest build of Paper \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-        else
-        # Check if the build exists
-        echo "\033[0;33mChecking existance of $SERVER_BUILD build for Paper \033[0m"
-        echo ""
-        status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}/builds/${SERVER_BUILD})
-        if [ "$status_code" -ne 200 ]
-        then
-          echo "\033[0;31mError: Paper $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-      fi
-      JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-      URL=${URL}/builds/${SERVER_BUILD}/downloads/${JAR_NAME}
-      ;;
-  "purpur")
-      URL=https://api.purpurmc.org/v2/purpur/
-      if [ ${MC_VERSION} = latest ]
-      then
-        # Get the latest MC version
-        echo "\033[0;33mGetting latest Minecraft version... \033[0m"
-        echo ""
-        MC_VERSION=$(wget -qO - $URL | jq -r '.versions[-1]')
-        if [ $? -ne 0 ]
-        then
-          echo "\033[0;31mError: Could not get latest version of Minecraft \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-      fi
-      BUILD_URL=https://api.purpurmc.org/v2/purpur/${MC_VERSION}/
-      if [ ${SERVER_BUILD} = latest ]
-      then
-        # Get the latest build
-        echo "\033[0;33mGetting latest build for Purpur \033[0m"
-        echo ""
-        SERVER_BUILD=$(wget -qO - $BUILD_URL | jq -r '.builds.latest')
-        if [ $? -ne 0 ]
-        then
-          echo "\033[0;31mError: Could not get latest build of Purpur \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-        else
-        # Check if the build exists
-        echo "\033[0;33mChecking existance of $SERVER_BUILD build for Purpur \033[0m"
-        echo ""
-        status_code=$(curl -s -o /dev/null -w '%{http_code}' ${URL}${MC_VERSION}/builds/${SERVER_BUILD})
-        if [ "$status_code" -ne 200 ]
-        then
-          echo "\033[0;31mError: Purpur $SERVER_BUILD build does not exist or is not available. Exiting... \033[0m"
-          echo "Something went wrong, retry." > server_cfg.txt
-          exit 1
-        fi
-      fi
-
-      JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
-      URL=${BUILD_URL}${SERVER_BUILD}/download
-      ;;
-  *)
-      echo "\033[0;31mError: $SERVER_PROVIDER is not a valid or currently supported provider. Exiting... \033[0m"
-      echo "Something went wrong, retry." > server_cfg.txt
-      exit 1
-      ;;
-esac
+# Set the jar file name
+JAR_NAME=${SERVER_PROVIDER}-${MC_VERSION}-${SERVER_BUILD}.jar
 
 # Update jar if necessary
 if [ ! -e ${JAR_NAME} ]
@@ -155,15 +147,15 @@ then
   echo "\033[0;33mRemoving old server jars... \033[0m"
   echo ""
   rm -f *.jar
-  # Download new server jar
-  echo "\033[0;33mDownloading $JAR_NAME \033[0m"
-  echo ""
-  if ! curl -f -o ${JAR_NAME} -sS ${URL}
-  then
-    echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m"
-    echo "Something went wrong, retry." > server_cfg.txt
-    exit 1
-  fi
+fi
+
+# Download new server jar
+echo "\033[0;33mDownloading $JAR_NAME \033[0m"
+echo ""
+if ! curl -o ${JAR_NAME} -sS ${API_FETCH_JAR}
+then
+  echo "\033[0;31mError: Jar URL does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
+  exit 1
 fi
 
 # If this is the first run, accept the EULA
@@ -172,14 +164,11 @@ then
   # Run the server once to generate eula.txt
   echo "\033[0;33mGenerating EULA... \033[0m"
   echo ""
-  java -jar ${JAR_NAME} > /dev/null 2>&1
-  if [ $? -ne 0 ]
+  if ! java -jar ${JAR_NAME} > /dev/null 2>&1
   then
-      echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m"
-      echo "Something went wrong, retry." > server_cfg.txt
+      echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m" | tee server_cfg.txt
       exit 1
   fi
-
   # Edit eula.txt to accept the EULA
   echo "\033[0;33mAccepting EULA... \033[0m"
   echo ""
@@ -197,12 +186,11 @@ else
 fi
 
 # Generate lazymc.toml if necessary
-if [ ! -e lazymc.toml ]
+if [ ! -e lazymc.toml ] && [ ! "$LAZYMC_VERSION" = "disabled" ]
 then
   echo "\033[0;33mGenerating lazymc.toml \033[0m"
   echo ""
-  ./lazymc config generate
-  if [ $? -ne 0 ]
+  if ! ./lazymc config generate
   then
     echo "\033[0;31mError: Could not generate lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
@@ -210,28 +198,40 @@ then
 fi
 
 # Add new values to lazymc.toml
-echo "\033[0;33mUpdating lazymc.toml with latest details... \033[0m"
-echo ""
-# Check if the comment is already present in the file
-if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
+if [ ! "$LAZYMC_VERSION" = "disabled" ]
 then
-  # Add the comment to the file
-  sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
-fi
-sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
-if [ $? -ne 0 ]
-then
-  echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
-  exit 1
+  echo "\033[0;33mUpdating lazymc.toml with latest details... \033[0m"
+  echo ""
+  # Check if the comment is already present in the file
+  if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
+  then
+    # Add the comment to the file
+    sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
+  fi
+  if ! sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
+  then
+    echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
 fi
 
-# Start the server
-echo "\033[0;33mStarting the server! \033[0m"
-echo ""
-./lazymc start
-if [ $? -ne 0 ]
+# Server launch handler
+if [ "$LAZYMC_VERSION" = "disabled" ]
 then
-  echo "\033[0;31mError: Could not start the server \033[0m"
-  echo "Something went wrong, retry." > server_cfg.txt
-  exit 1
+  # Start directly the server when lazymc is disabled
+  echo "\033[0;33mStarting the server! \033[0m"
+  echo ""
+  if ! java $JAVA_OPTS -jar $JAR_NAME nogui
+  then
+    echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
+else
+  echo "\033[0;33mStarting the server! \033[0m"
+  echo ""
+  if ! ./lazymc start
+  then
+    echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
 fi
