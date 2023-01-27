@@ -7,7 +7,7 @@ on:
     paths:
       - '*'
       - '!README.md'
-      - '!CHANGELOG.md'
+      - '!changelog.md'
       - '!\.gitignore'
       - '!\.github/workflows/*'
   workflow_dispatch: # Manual trigger
