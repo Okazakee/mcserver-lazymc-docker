@@ -1,5 +1,6 @@
 # To do:
 - [ ] Make stopping the container launch "stop" command in server if possible.
+- [ ] Automatically detect CPU architecture.
 - [ ] Create actions to test docker images before merging and pushing.
 - [ ] Find something to do with [cardboard](https://github.com/CardboardPowered/cardboard).
 - [ ] Fix changelog release action.
