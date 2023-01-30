@@ -7,11 +7,12 @@ lazymc_supported_archs="aarch64 x86_64 armv7"
 arch=$(uname -m)
 
 # Adapt the answer in x86 case to support Lazymc url schema
-[[ $arch == "x86_64" ]] && arch="x64"
+[ $arch = "x86_64" ] && arch="x64"
 
 # Check if Lazymc is supported for that arch, if not, continue disabling Lazymc
-if echo "$lazymc_supported_archs" | grep -wq "$arch"; then
-  echo "\032[0;31mWarning! Your CPU architecture ($arch) is not supported by Lazymc. Disabling it... \033[0m"
+if ! echo "$lazymc_supported_archs" | grep -wq "$arch"
+then
+  echo "\033[0;31mWarning! Your CPU architecture ($arch) is not supported by Lazymc. Disabling it... \033[0m"
   LAZYMC_VERSION="disabled"
 fi
 
@@ -242,3 +243,19 @@ else
     exit 1
   fi
 fi
+
+# Server container stop handler
+function container_stop_handler {
+  # Code to be executed before the container stops
+  echo "Container is about to stop. Executing container_stop_handler function."
+}
+
+# Set trap for the EXIT signal
+trap container_stop_handler EXIT
+
+# Your script goes here
+# ...
+
+# Wait for user to stop the container
+echo "Container is running. Press [CTRL+C] to stop."
+while true; do sleep 1; done
