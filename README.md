@@ -1,7 +1,10 @@
-# Minecraft Servers w/ `lazymc` using Docker
+
+<img alt="logo" width='30%' align="right" src="https://raw.githubusercontent.com/Okazakee/Global-Assets/main/mcserver-lazymc-docker/logo%20project%20mcdocker-min.png" />
+
+## Minecraft Servers w/ [Lazymc](https://github.com/timvisee/lazymc) using Docker
 This is a Linux Docker image for creating Minecraft servers with `lazymc`.
 
-[lazymc](https://github.com/timvisee/lazymc) is a utility that puts your Minecraft server to rest when idle and wakes it up when players try to connect.
+**Lazymc** is a utility that puts your Minecraft server to rest when idle and wakes it up when players try to connect.
 This allows the server to not waste resources if nobody is connected.
 
 This image provides a basic Minecraft server using one of the supported providers. All customizations are left to the user.
@@ -17,7 +20,7 @@ It is assumed that the user has already acquired a working Docker installation. 
 
 ## Using docker run:
 ```bash
-sudo docker run -p 25565:25565 -e CPU_ARCH="<your_cpu_arch>" okazakee/mcserver-lazymc-docker
+sudo docker run -p 25565:25565 -e okazakee/mcserver-lazymc-docker
 ```
 While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying more options/envs.
 
@@ -31,7 +34,6 @@ services:
             - '<your-port>:25565'
         container_name: <your-container-name>
         environment:
-            - CPU_ARCH=<your-cpu-architecture>
             - SERVER_PROVIDER=<your-server-provider>
             - LAZYMC_VERSION=<your-lazymc-version>
             - MC_VERSION=<your-mc-version>
@@ -77,18 +79,12 @@ There is one more command line option, but it is a bit special and deserves its 
 ### Environment Variables
 Environment variables are options that are specified in the format `-e <NAME>="<VALUE>"` where `<NAME>` is the name of the environment variable and `<VALUE>` is the value that the environment variable is being set to. Please note that setting an evironment variable with no value leaves the default value, which you can look up below.
 
-Mandatory `ENV` fields will have a `*` after their name.
+[comment]: <> (Mandatory `ENV` fields will have a `*` after their name.)
 
 This image has seven environment variables:
-- CPU Architecture *
-  - **Name:** `CPU_ARCH`
-  - Set this to the cpu architecture you want to use.
-  - Avaliable architectures are: `x64`, `x64-static`, `aarch64`, `armv7`.
-  - No default value for this, make sure to include it in the command or docker compose.
-  - `-e CPU_ARCH="<x64>"`
 - Server Provider
   - **Name:** `SERVER_PROVIDER`
-  - Set this to the server provider you want to use.
+  - Set this to the server [Provider](#supported-server-providers) you want to use.
   - Default value: `purpur`.
   - `-e SERVER_PROVIDER="<paper>"`
 - Lazymc Version
@@ -100,13 +96,13 @@ This image has seven environment variables:
 - Minecraft Version
   - **Name:** `MC_VERSION`
   - Set this to the Minecraft version that the server should support.
-  - Note: there must be a PaperMC (or alternatives) release for the specified version of Minecraft.
+  - Note: there must be a [Provider](#supported-server-providers) release for the specified version of Minecraft.
   - Default value: `latest`.
   - Changing this on an existing server will change the version *without wiping the server*.
   - `-e MC_VERSION="<latest>"`
 - Server Build
   - **Name:** `SERVER_BUILD`
-  - Set this to the number of the PaperMC (or alternatives) build that the server should use (**not the Minecraft version**).
+  - Set this to the number of the [Provider](#supported-server-providers) build that the server should use (**not the Minecraft version**).
   - Default value: `latest`.
   - Changing this on an existing server will change the version *without wiping the server*.
   - `-e SERVER_BUILD="<latest>"`
@@ -136,7 +132,7 @@ From this point, the server should be configured in the same way as any other Mi
 ## Technical
 This project *does **NOT** redistribute the Minecraft server files*.
 
-**PLEASE NOTE:** This is an unofficial project. I did not create PaperMC or other providers.
+**PLEASE NOTE:** This is an unofficial project. I did not create any of the supported [Providers](#supported-server-providers).
 
 ## Project Pages
 - [GitHub page](https://github.com/okazakee/mcserver-lazymc-docker).
