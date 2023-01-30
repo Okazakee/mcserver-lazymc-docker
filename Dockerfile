@@ -2,8 +2,7 @@
 FROM eclipse-temurin:19-jre-jammy
 
 # Environment variables
-ENV CPU_ARCH="" \
-    SERVER_PROVIDER="purpur" \
+ENV SERVER_PROVIDER="purpur" \
     LAZYMC_VERSION="latest" \
     MC_VERSION="latest" \
     SERVER_BUILD="latest" \
