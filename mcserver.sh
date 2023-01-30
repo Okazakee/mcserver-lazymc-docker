@@ -1,11 +1,19 @@
 #!/bin/bash
 
-# Check if CPU architecture is set and if it's a correct value
-ACCEPTED_VALUES="armv7 aarch64 x64 x64-static"
-if [ -z "$CPU_ARCH" ] || ! echo "$ACCEPTED_VALUES" | grep -wq "$CPU_ARCH"
-then
-  echo "\033[0;31mError: Please include a valid CPU architecture. Exiting... \033[0m"
-  exit 1
+# Declare supported Lazymc archs
+lazymc_supported_archs="aarch64 x86_64"
+
+# Getting arch from system
+arch=$(uname -m)
+
+
+# Adapt the answer in x86 case to support Lazymc url schema
+[[ $arch == "x86_64" ]] && arch="x64"
+
+# Check if Lazymc is supported for that arch, if not, continue disabling Lazymc
+if echo "$lazymc_supported_archs" | grep -wq "$arch"; then
+  echo "\032[0;31mWarning! Your CPU architecture ($arch) is not supported by Lazymc. Disabling it... \033[0m"
+  LAZYMC_VERSION="disabled"
 fi
 
 # Enter server directory
