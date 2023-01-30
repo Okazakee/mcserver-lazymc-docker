@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Declare supported Lazymc archs
-lazymc_supported_archs="aarch64 x86_64"
+lazymc_supported_archs="aarch64 x86_64 armv7"
 
 # Getting arch from system
 arch=$(uname -m)
