@@ -6,7 +6,6 @@ lazymc_supported_archs="aarch64 x86_64"
 # Getting arch from system
 arch=$(uname -m)
 
-
 # Adapt the answer in x86 case to support Lazymc url schema
 [[ $arch == "x86_64" ]] && arch="x64"
 
