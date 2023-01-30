@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # Ram selection sanitization
-if ! test "$MC_RAM" =~ ^[0-9]+[MG]$
-then
-  echo "\033[0;31mError: $MC_RAM is not a valid RAM format. Exiting... \033[0m" | tee server_cfg.txt
-  exit 1
+if ! echo "$MC_RAM" | grep -Eq '^[0-9]+[MG]$'; then
+  if ! [ -z "$MC_RAM" ]
+  then
+    echo "\033[0;31mError: $MC_RAM is not a valid RAM format. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
+  fi
 fi
 
 # Declare supported Lazymc archs
