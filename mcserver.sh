@@ -27,7 +27,6 @@ echo "Minecraft Version= \033[0;33m$MC_VERSION\033[0m" | tee -a server_cfg.txt
 echo "Lazymc version= \033[0;33m$LAZYMC_VERSION\033[0m" | tee -a server_cfg.txt
 echo "Server provider= \033[0;33m$SERVER_PROVIDER\033[0m" | tee -a server_cfg.txt
 echo "Server build= \033[0;33m$SERVER_BUILD\033[0m" | tee -a server_cfg.txt
-echo "CPU architecture= \033[0;33m$CPU_ARCH\033[0m" | tee -a server_cfg.txt
 echo "Dedicated RAM= \033[0;33m${MC_RAM:-"Not specified."}\033[0m" | tee -a server_cfg.txt
 echo "Java options= \033[0;33m${JAVA_OPTS:-"Not specified."}\033[0m" | tee -a server_cfg.txt
 echo ""
