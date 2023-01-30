@@ -249,37 +249,3 @@ else
     exit 1
   fi
 fi
-
-# Server container stop handler
-function container_stop_handler {
-  # Code to be executed before the container stops
-  echo "Container is about to stop. Executing container_stop_handler function."
-}
-
-# Set trap for the EXIT signal
-trap container_stop_handler EXIT
-
-# Server stop handler
-if [ "$LAZYMC_VERSION" = "disabled" ]
-then
-  # Stop directly the server when lazymc is disabled
-  echo "\033[0;33mStopping the server! \033[0m"
-  echo ""
-  if ! java $JAVA_OPTS -jar $JAR_NAME nogui
-  then
-    echo "\033[0;31mError: Could not stop the server. Exiting... \033[0m" | tee server_cfg.txt
-    exit 1
-  fi
-else
-  echo "\033[0;33mStopping the server! \033[0m"
-  echo ""
-  if ! ./lazymc stop
-  then
-    echo "\033[0;31mError: Could not stop the server. Exiting... \033[0m" | tee server_cfg.txt
-    exit 1
-  fi
-fi
-
-# Wait for user to stop the container
-echo "Container is running. Press [CTRL+C] to stop."
-while true; do sleep 1; done
