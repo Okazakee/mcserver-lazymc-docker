@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Ram selection sanitization
+if ! [[ $MC_RAM =~ ^[0-9]+[MG]$ ]]
+then
+  echo "\033[0;31mError: $MC_RAM is not a valid RAM format. Exiting... \033[0m" | tee server_cfg.txt
+  exit 1
+fi
+
 # Declare supported Lazymc archs
 lazymc_supported_archs="aarch64 x86_64 armv7"
 
