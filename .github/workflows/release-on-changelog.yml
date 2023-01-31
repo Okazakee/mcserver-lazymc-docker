@@ -1,10 +1,10 @@
 name: Release
+
 on:
   push:
-    branches:
-        - master
     paths:
       - 'changelog.md'
+  workflow_dispatch:
 
 jobs:
   release:
@@ -13,20 +13,20 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
     - name: Get Changelog
       run: |
         VERSION=$(sed -n 's/## \([0-9.]*\).*/\1/p' changelog.md | head -n 1)
-        echo "$VERSION" >> $GITHUB_STATE
         CHANGELOG=$(awk '/## '$VERSION'/{flag=1;next}/##/{flag=0}flag' changelog.md)
-        printf "## %s (date)\n\n%s" $VERSION "$CHANGELOG"
-        echo "$CHANGELOG" >> $GITHUB_OUTPUT
+        echo "## ${VERSION} (date)\n\n${CHANGELOG}" > changelog.txt
+
     - name: Create Release
       uses: actions/create-release@v1.1.4
       env:
         GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
       with:
-        tag_name: $(cat $GITHUB_STATE)
-        release_name: Release $(cat $GITHUB_STATE)
-        body: $(cat $GITHUB_OUTPUT)
+        tag_name: ${VERSION}
+        release_name: Release ${VERSION}
+        body_file: changelog.txt
         draft: false
         prerelease: false
