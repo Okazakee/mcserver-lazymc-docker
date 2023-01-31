@@ -13,15 +13,15 @@ fi
 lazymc_supported_archs="aarch64 x86_64 armv7"
 
 # Getting arch from system
-arch=$(uname -m)
+CPU_ARCH=$(uname -m)
 
 # Adapt the answer in x86 case to support Lazymc url schema
-[ $arch = "x86_64" ] && arch="x64"
+[ $CPU_ARCH = "x86_64" ] && CPU_ARCH="x64"
 
 # Check if Lazymc is supported for that arch, if not, continue disabling Lazymc
-if ! echo "$lazymc_supported_archs" | grep -wq "$arch"
+if ! echo "$lazymc_supported_archs" | grep -wq "$CPU_ARCH"
 then
-  echo "\033[0;31mWarning! Your CPU architecture ($arch) is not supported by Lazymc. Disabling it... \033[0m"
+  echo "\033[0;31mWarning! Your CPU architecture ($CPU_ARCH) is not supported by Lazymc. Disabling it... \033[0m"
   LAZYMC_VERSION="disabled"
 fi
 
@@ -45,31 +45,21 @@ echo ""
 #give user time to read
 sleep 1
 
-# Lazymc handler
-lazymc_download() {
-  echo "\033[0;33mDownloading lazymc $LAZYMC_VERSION... \033[0m"
-  echo ""
-  wget -qO lazymc ${LAZYMC_URL}
-  chmod +x lazymc
-}
-
-# URL builder
+# Lazymc setup handler
 if [ "$LAZYMC_VERSION" = "disabled" ]
 then
-  # Skip download
   echo "\033[0;33mSkipping lazymc download... \033[0m"
   echo ""
-elif [ "$LAZYMC_VERSION" = "latest" ]
-then
-  # Build latest ver download url
-  LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name | cut -c 2-)
-  if [ -z "$LAZYMC_VERSION" ]
-  then
-    echo "\033[0;31mError: Could not get latest version of lazymc. Exiting... \033[0m" | tee server_cfg.txt
-    exit 1
-  fi
 else
-  # Build specified ver download url
+  if [ "$LAZYMC_VERSION" = "latest" ]
+  then
+    LAZYMC_VERSION=$(wget -qO - https://api.github.com/repos/timvisee/lazymc/releases/latest | jq -r .tag_name | cut -c 2-)
+    if [ -z "$LAZYMC_VERSION" ]
+    then
+      echo "\033[0;31mError: Could not get latest version of lazymc. Exiting... \033[0m" | tee server_cfg.txt
+      exit 1
+    fi
+  fi
   LAZYMC_URL="https://github.com/timvisee/lazymc/releases/download/v$LAZYMC_VERSION/lazymc-v$LAZYMC_VERSION-linux-$CPU_ARCH"
   status_code=$(curl -s -o /dev/null -w '%{http_code}' ${LAZYMC_URL})
   if [ "$status_code" -ne 302 ]
@@ -77,8 +67,10 @@ else
     echo "\033[0;31mError: Lazymc $LAZYMC_VERSION version does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
-  # Download lazymc
-  lazymc_download
+  echo "\033[0;33mDownloading lazymc $LAZYMC_VERSION... \033[0m"
+  echo ""
+  wget -qO lazymc ${LAZYMC_URL}
+  chmod +x lazymc
 fi
 
 # Declaring supported types
