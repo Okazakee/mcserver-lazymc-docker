@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0 (31/01/2023)
+
+- Automatically detect CPU architecture.
+- Added MC_RAM value sanitization.
+- Automatically skip Lazymc download if cpu-arch is not supported.
+
 ## 1.0.0 (27-01-2023)
 
 - First stable release!
