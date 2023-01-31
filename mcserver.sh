@@ -13,15 +13,15 @@ fi
 lazymc_supported_archs="aarch64 x86_64 armv7"
 
 # Getting arch from system
-arch=$(uname -m)
+CPU_ARCH=$(uname -m)
 
 # Adapt the answer in x86 case to support Lazymc url schema
-[ $arch = "x86_64" ] && arch="x64"
+[ $CPU_ARCH = "x86_64" ] && CPU_ARCH="x64"
 
 # Check if Lazymc is supported for that arch, if not, continue disabling Lazymc
-if ! echo "$lazymc_supported_archs" | grep -wq "$arch"
+if ! echo "$lazymc_supported_archs" | grep -wq "$CPU_ARCH"
 then
-  echo "\033[0;31mWarning! Your CPU architecture ($arch) is not supported by Lazymc. Disabling it... \033[0m"
+  echo "\033[0;31mWarning! Your CPU architecture ($CPU_ARCH) is not supported by Lazymc. Disabling it... \033[0m"
   LAZYMC_VERSION="disabled"
 fi
 
