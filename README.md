@@ -1,6 +1,7 @@
 
 <img alt="logo" width='30%' align="right" src="https://raw.githubusercontent.com/Okazakee/Global-Assets/main/mcserver-lazymc-docker/logo%20project%20mcdocker-min.png" />
 
+
 ## Minecraft Servers w/ [Lazymc](https://github.com/timvisee/lazymc) using Docker
 
 This is a Linux Docker image for creating Minecraft servers with `lazymc`.
