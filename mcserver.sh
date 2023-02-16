@@ -10,7 +10,7 @@ if ! echo "$MC_RAM" | grep -Eq '^[0-9]+[MG]$'; then
 fi
 
 # Declare supported Lazymc archs
-lazymc_supported_archs="aarch64 x86_64 armv7"
+lazymc_supported_archs="aarch64 x64 armv7"
 
 # Getting arch from system
 CPU_ARCH=$(uname -m)
