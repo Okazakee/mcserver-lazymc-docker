@@ -12,7 +12,7 @@ This allows the server to not waste resources if nobody is connected.
 This image provides a basic Minecraft server using one of the supported providers. All customizations are left to the user.
 
 # Supported server providers:
-### [Vanilla](https://www.minecraft.net/) | [Paper](https://papermc.io/) | [Purpur](https://purpurmc.org/) | [Fabric](https://fabricmc.net/)
+### [Vanilla](https://www.minecraft.net/) | [Paper](https://papermc.io/) | [Purpur](https://purpurmc.org/) | [Fabric](https://fabricmc.net/) | [Forge](https://forums.minecraftforge.net/)
 Wamt more? Let me know in the [discussions](https://github.com/Okazakee/mcserver-lazymc-docker/discussions).
 
 # Usage
