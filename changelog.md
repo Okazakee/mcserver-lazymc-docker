@@ -2,7 +2,7 @@
 
 ## 1.1.1 (11/10/2023)
 
-- - New providers support: `forge`
+- New providers support: `forge`
 
 ## 1.1.0 (31/01/2023)
 
