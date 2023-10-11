@@ -13,7 +13,7 @@ This image provides a basic Minecraft server using one of the supported provider
 
 # Supported server providers:
 ### [Vanilla](https://www.minecraft.net/) | [Paper](https://papermc.io/) | [Purpur](https://purpurmc.org/) | [Fabric](https://fabricmc.net/)
-Wamt more? Let me know in the [issues](https://github.com/Okazakee/mcserver-lazymc-docker/issues).
+Wamt more? Let me know in the [discussions](https://github.com/Okazakee/mcserver-lazymc-docker/discussions).
 
 # Usage
 It is assumed that the user has already acquired a working Docker installation. If that is not the case, [go do that](https://www.docker.com/get-started/) and come back here when you're done.
