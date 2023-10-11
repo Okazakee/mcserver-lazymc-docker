@@ -74,7 +74,7 @@ else
 fi
 
 # Declaring supported types
-allowed_modded_type="fabric"
+allowed_modded_type="fabric forge"
 allowed_servers_type="paper purpur"
 
 # Determine server type
@@ -172,10 +172,15 @@ then
   # Run the server once to generate eula.txt
   echo "\033[0;33mGenerating EULA... \033[0m"
   echo ""
-  if ! java -jar ${JAR_NAME} > /dev/null 2>&1
-  then
-      echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m" | tee server_cfg.txt
-      exit 1
+  if [ "$SERVER_PROVIDER" == "forge" ]; then
+    java -jar ${JAR_NAME} --installServer > /dev/null 2>&1
+  else
+    java -jar ${JAR_NAME} > /dev/null 2>&1
+  fi
+
+  if [ $? -ne 0 ]; then
+    echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m" | tee server_cfg.txt
+    exit 1
   fi
   # Edit eula.txt to accept the EULA
   echo "\033[0;33mAccepting EULA... \033[0m"
