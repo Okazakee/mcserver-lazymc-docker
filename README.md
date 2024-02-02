@@ -120,6 +120,14 @@ This image has seven environment variables:
   - Set to any additional Java command line options that you would like to include.
   - By default, this environment variable is set to the empty string.
   - `-e JAVA_OPTS="<-XX:+UseConcMarkSweepGC -XX:+UseParNewGC>"`
+- Custom Run command
+  - **Name:** `RUN_COMMAND`
+  - **ADVANCED USERS ONLY**
+  - Set to the name of the custom server jar you want to use.
+  - also allows pointing to a scrpt file, this reqires the full path to the file.
+  - For more information, see [Lazymc's documentation](https://github.com/timvisee/lazymc/blob/master/docs/command-bash.md).
+  - By default, this environment variable is set to the empty string.
+  - `-e RUN_COMMAND="<custom.jar>"` or `-e RUN_COMMAND="/mcserver/<custom.sh>"`
 
 ## Further Setup
 From this point, the server should be configured in the same way as any other Minecraft server. The server's files, including `server.properties`, can be found in the volume that was specified earlier. The port that was specified earlier will probably need to be forwarded as well. For details on how to do this and other such configuration, Google it, because it works the same as any other Minecraft server.

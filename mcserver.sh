@@ -166,26 +166,79 @@ then
   exit 1
 fi
 
-# If this is the first run, accept the EULA
+# install forge if necessary
+if [ "$SERVER_PROVIDER" = "forge" ]
+then
+  # .installed file is used to check if forge is already installed by a previous run of the container
+  if [ ! -e .installed ]
+  then
+    echo "\033[0;33mInstalling Forge... This will take a while...\033[0m"
+    echo ""
+    if ! java -jar $JAR_NAME --installServer > /dev/null 2>&1
+    then
+      echo "\033[0;31mError: Could not install Forge. Exiting... \033[0m" | tee server_cfg.txt
+      exit 1
+    fi
+    touch .installed
+  else
+    echo "\033[0;33mForge already installed. Skipping installation... \033[0m"
+    echo ""
+  fi
+fi
+
+#determine run command
+if  [ -z "$RUN_COMMAND" ]
+then
+  if [ "$SERVER_PROVIDER" = "forge" ]
+  then
+    #parse the mincraft verison  if  it is 1.17.0 or higher we need to use the new forge run command
+    mcmajor=$(echo $MC_VERSION | cut -d'.' -f1)
+    mcminor=$(echo $MC_VERSION | cut -d'.' -f2)
+    mcpatch=$(echo $MC_VERSION | cut -d'.' -f3)
+    if [ $mcmajor -ge 1 ] && [ $mcminor -ge 17 ] && [ $mcpatch -ge 0 ]
+    then
+      #grep the java line from the Run.sh file
+      echo "\033[0;33mGetting new forge run command from run.sh... \033[0m"
+      echo ""
+      rcmd=$(grep -m 1 "java" /mcserver/run.sh)
+      #strip the "$@" from the end of the line and add nogui to the end
+      rcmd=$(echo $rcmd | sed 's/"$@"/nogui/')
+      printf '\033[0;33mNew forge run command: %s \033[0m' "$rcmd"
+      echo ""
+      #if user has set MC_RAM then we will use it by appending it to the user_jvm_args.txt file
+      if [ ! -z "${MC_RAM}" ]
+      then
+        echo "\033[0;33mSetting user RAM Limit args... \033[0m"
+        echo ""
+        echo "-Xms512M -Xmx${MC_RAM}" >> /mcserver/user_jvm_args.txt
+      fi
+      RUN_COMMAND=$rcmd
+    else
+      RUN_COMMAND="java ${JAVA_OPTS} -jar $JAR_NAME nogui"
+    fi
+  fi    
+else
+  echo "\033[0;33mUsing custom run command... \033[0m"
+fi
+
+# Generate eula.txt if necessary
 if [ ! -e eula.txt ]
 then
-  # Run the server once to generate eula.txt
-  echo "\033[0;33mGenerating EULA... \033[0m"
+  echo "\033[0;33mGenerating eula.txt \033[0m"
   echo ""
-  if [ "$SERVER_PROVIDER" == "forge" ]; then
-    java -jar ${JAR_NAME} --installServer > /dev/null 2>&1
-  else
-    java -jar ${JAR_NAME} > /dev/null 2>&1
-  fi
-
-  if [ $? -ne 0 ]; then
-    echo "\033[0;31mError: Cannot generate EULA. Exiting... \033[0m" | tee server_cfg.txt
+  if ! echo "eula=true" > eula.txt
+  then
+    echo "\033[0;31mError: Could not generate eula.txt. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
-  # Edit eula.txt to accept the EULA
-  echo "\033[0;33mAccepting EULA... \033[0m"
+fi
+
+# Generate server.properties if not present, Prevents the server from failing to start on first run
+if [ ! -e server.properties ]
+then
+  echo "\033[0;33mGenerating server.properties \033[0m"
   echo ""
-  sed -i 's/false/true/g' eula.txt
+  touch server.properties
 fi
 
 # Add RAM options to Java options if necessary
@@ -221,7 +274,7 @@ then
     # Add the comment to the file
     sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
   fi
-  if ! sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
+  if ! sed -i "s~command = .*~command = \"$RUN_COMMAND\"~" lazymc.toml
   then
     echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
@@ -234,7 +287,7 @@ then
   # Start directly the server when lazymc is disabled
   echo "\033[0;33mStarting the server! \033[0m"
   echo ""
-  if ! java $JAVA_OPTS -jar $JAR_NAME nogui
+  if ! $RUN_COMMAND
   then
     echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
