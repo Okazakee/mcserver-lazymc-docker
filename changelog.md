@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 (02/02/2024)
+
+- Fixed new Forge startup procedure [#24](/../../issues/24)
+
 ## 1.1.1 (11/10/2023)
 
 - New providers support: `forge`
