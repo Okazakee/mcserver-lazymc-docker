@@ -219,13 +219,21 @@ then
   if ! grep -q "mcserver-lazymc-docker" lazymc.toml;
   then
     # Add the comment to the file
-    sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this!' lazymc.toml
+    sed -i '/Command to start the server/i # Managed by mcserver-lazymc-docker, please do not edit this! Use the MC_COMMAND Enviroment variable to set.' lazymc.toml
   fi
-  if ! sed -i "s~command = .*~command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"~" lazymc.toml
+  if $MC_COMMAND != ""
   then
-    echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
-    exit 1
-  fi
+    if ! sed -i "s/command = .*/command = \"$MC_COMMAND\"/" lazymc.toml
+    then
+      echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
+      exit 1
+    fi
+  else
+    if ! sed -i "s/command = .*/command = \"java $JAVA_OPTS -jar $JAR_NAME nogui\"/" lazymc.toml
+    then
+      echo "\033[0;31mError: Could not update lazymc.toml. Exiting... \033[0m" | tee server_cfg.txt
+      exit 1
+    fi
 fi
 
 # Server launch handler
@@ -234,10 +242,19 @@ then
   # Start directly the server when lazymc is disabled
   echo "\033[0;33mStarting the server! \033[0m"
   echo ""
-  if ! java $JAVA_OPTS -jar $JAR_NAME nogui
+  if $MC_COMMAND != ""
   then
-    echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
-    exit 1
+    if ! $MC_COMMAND
+    then
+      echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
+      exit 1
+    fi
+  else
+    if ! java $JAVA_OPTS -jar $JAR_NAME nogui
+    then
+      echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
+      exit 1
+    fi
   fi
 else
   echo "\033[0;33mStarting the server! \033[0m"

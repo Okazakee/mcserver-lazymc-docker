@@ -6,6 +6,7 @@
 # stuff
 wip.md
 mcserver/
+docker-compose.yml
 
 # User-specific files
 *.suo
