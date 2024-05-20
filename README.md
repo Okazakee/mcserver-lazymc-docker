@@ -1,5 +1,5 @@
 
-<img alt="logo" width='30%' align="right" src="https://okazakee-dev-storage.s3.eu-west-3.amazonaws.com/mcserver-lazymc-docker/logo+project+mcdocker.png" />
+<img alt="logo" width='30%' align="right" src="https://github.com/Okazakee/mcserver-lazymc-docker/blob/master/bg.png" />
 
 
 ## Minecraft Servers w/ [Lazymc](https://github.com/timvisee/lazymc) using Docker
