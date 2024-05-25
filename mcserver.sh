@@ -286,6 +286,7 @@ then
   # Start directly the server when lazymc is disabled
   echo "\033[0;33mStarting the server! \033[0m"
   echo ""
+  echo $RUN_COMMAND
   if ! $RUN_COMMAND
   then
     echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
