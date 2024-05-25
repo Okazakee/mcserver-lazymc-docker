@@ -93,9 +93,9 @@ else
 fi
 
 # FETCH LATEST VER API - thx to centrojars.com
-API_FETCH_LATEST="https://centrojars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
+API_FETCH_LATEST="https://centrojars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}/"
 # FETCH VER DETAILS API - thx to centrojars.com
-API_FETCH_DETAILS="https://centrojars.com/api/fetchDetails/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
+API_FETCH_DETAILS="https://centrojars.com/api/fetchAll/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
 
 # Get the latest MC version
 if [ ${MC_VERSION} = latest ]
@@ -117,7 +117,7 @@ then
 fi
 
 # FETCH JAR API - thx to centrojars.com
-API_FETCH_JAR="https://centrojars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
+API_FETCH_JAR="https://centrojars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}.jar"
 
 # Set the BUILD_FETCH_API value based on SERVER_PROVIDER
 case $SERVER_PROVIDER in
@@ -186,28 +186,24 @@ then
   fi
 fi
 
-#determine run command
-if  [ -z "$RUN_COMMAND" ]
-then
-  if [ "$SERVER_PROVIDER" = "forge" ]
-  then
-    #parse the mincraft verison  if  it is 1.17.0 or higher we need to use the new forge run command
+# Determine run command
+if [ -z "$RUN_COMMAND" ]; then
+  if [ "$SERVER_PROVIDER" = "forge" ]; then
+    # Parse the Minecraft version. If it is 1.17.0 or higher, we need to use the new Forge run command.
     mcmajor=$(echo $MC_VERSION | cut -d'.' -f1)
     mcminor=$(echo $MC_VERSION | cut -d'.' -f2)
     mcpatch=$(echo $MC_VERSION | cut -d'.' -f3)
-    if [ $mcmajor -ge 1 ] && [ $mcminor -ge 17 ] && [ $mcpatch -ge 0 ]
-    then
-      #grep the java line from the Run.sh file
+    if [ $mcmajor -ge 1 ] && [ $mcminor -ge 17 ] && [ $mcpatch -ge 0 ]; then
+      # Grep the java line from the run.sh file
       echo "\033[0;33mGetting new forge run command from run.sh... \033[0m"
       echo ""
       rcmd=$(grep -m 1 "java" /mcserver/run.sh)
-      #strip the "$@" from the end of the line and add nogui to the end
+      # Strip the "$@" from the end of the line and add nogui to the end
       rcmd=$(echo $rcmd | sed 's/"$@"/nogui/')
       printf '\033[0;33mNew forge run command: %s \033[0m' "$rcmd"
       echo ""
-      #if user has set MC_RAM then we will use it by appending it to the user_jvm_args.txt file
-      if [ ! -z "${MC_RAM}" ]
-      then
+      # If user has set MC_RAM then we will use it by appending it to the user_jvm_args.txt file
+      if [ ! -z "${MC_RAM}" ]; then
         echo "\033[0;33mSetting user RAM Limit args... \033[0m"
         echo ""
         echo "-Xms512M -Xmx${MC_RAM}" >> /mcserver/user_jvm_args.txt
@@ -216,10 +212,13 @@ then
     else
       RUN_COMMAND="java ${JAVA_OPTS} -jar $JAR_NAME nogui"
     fi
-  fi    
+  else
+    RUN_COMMAND="java ${JAVA_OPTS} -jar $JAR_NAME nogui"
+  fi
 else
   echo "\033[0;33mUsing custom run command... \033[0m"
 fi
+
 
 # Generate eula.txt if necessary
 if [ ! -e eula.txt ]
