@@ -200,7 +200,6 @@ if [ -z "$RUN_COMMAND" ]; then
       rcmd=$(grep -m 1 "java" /mcserver/run.sh)
       # Strip the "$@" from the end of the line and add nogui to the end
       rcmd=$(echo $rcmd | sed 's/--onlyCheckJava || exit 1//')
-      rcmd="$rcmd nogui"
       printf '\033[0;33mNew forge run command: %s \033[0m' "$rcmd"
       echo ""
       # If user has set MC_RAM then we will use it by appending it to the user_jvm_args.txt file
