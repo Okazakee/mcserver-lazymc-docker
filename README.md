@@ -134,7 +134,7 @@ From this point, the server should be configured in the same way as any other Mi
 ### Suggested repo for optimizing your settings: [YouHaveTrouble/minecraft-optimization](https://github.com/YouHaveTrouble/minecraft-optimization)
 
 ## Thanks to:
-- [ServerJars](serverjars.com) - They're API helped me a lot massively reducing my codebase size.
+- [Centrojars](centrojars.com) - They're API helped me a lot massively reducing my codebase size.
 - [Timvisee](https://github.com/timvisee) - Lead developer of Lazymc.
 - [Crbanman's Repo](https://github.com/crbanman/papermc-lazymc-docker) - Original fork on which this project is based of.
 - [Contributors](https://github.com/Okazakee/mcserver-lazymc-docker/graphs/contributors) - Thanks to everybody who has or will help with this project.

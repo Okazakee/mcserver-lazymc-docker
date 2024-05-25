@@ -92,10 +92,10 @@ else
     exit 1
 fi
 
-# FETCH LATEST VER API - thx to serverjars.com
-API_FETCH_LATEST="https://serverjars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
-# FETCH VER DETAILS API - thx to serverjars.com
-API_FETCH_DETAILS="https://serverjars.com/api/fetchDetails/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
+# FETCH LATEST VER API - thx to centrojars.com
+API_FETCH_LATEST="https://centrojars.com/api/fetchLatest/${SERVER_TYPE}/${SERVER_PROVIDER}"
+# FETCH VER DETAILS API - thx to centrojars.com
+API_FETCH_DETAILS="https://centrojars.com/api/fetchDetails/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
 
 # Get the latest MC version
 if [ ${MC_VERSION} = latest ]
@@ -109,15 +109,15 @@ then
   fi
   else
   # Check if the version exists
-  if ! [ ${MC_VERSION} = "$(wget -qO - $API_FETCH_DETAILS | jq -r '.response.version')" ]
+  if ! [ ${MC_VERSION} = "$(wget -qO - $API_FETCH_DETAILS | jq -r '.response[0].version')" ]
   then
     echo "\033[0;31mError: Minecraft version $MC_VERSION version does not exist or is not available. Exiting... \033[0m" | tee server_cfg.txt
     exit 1
   fi
 fi
 
-# FETCH JAR API - thx to serverjars.com
-API_FETCH_JAR="https://serverjars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
+# FETCH JAR API - thx to centrojars.com
+API_FETCH_JAR="https://centrojars.com/api/fetchJar/${SERVER_TYPE}/${SERVER_PROVIDER}/${MC_VERSION}"
 
 # Set the BUILD_FETCH_API value based on SERVER_PROVIDER
 case $SERVER_PROVIDER in
