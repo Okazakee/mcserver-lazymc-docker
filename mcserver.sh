@@ -199,7 +199,8 @@ if [ -z "$RUN_COMMAND" ]; then
       echo ""
       rcmd=$(grep -m 1 "java" /mcserver/run.sh)
       # Strip the "$@" from the end of the line and add nogui to the end
-      rcmd=$(echo $rcmd | sed 's/"$@"/nogui/')
+      rcmd=$(echo $rcmd | sed 's/--onlyCheckJava || exit 1//')
+      rcmd="$rcmd nogui"
       printf '\033[0;33mNew forge run command: %s \033[0m' "$rcmd"
       echo ""
       # If user has set MC_RAM then we will use it by appending it to the user_jvm_args.txt file
@@ -286,7 +287,6 @@ then
   # Start directly the server when lazymc is disabled
   echo "\033[0;33mStarting the server! \033[0m"
   echo ""
-  echo $RUN_COMMAND
   if ! $RUN_COMMAND
   then
     echo "\033[0;31mError: Could not start the server. Exiting... \033[0m" | tee server_cfg.txt
