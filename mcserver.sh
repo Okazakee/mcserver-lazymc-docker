@@ -197,7 +197,7 @@ if [ -z "$RUN_COMMAND" ]; then
       # Grep the java line from the run.sh file
       echo "\033[0;33mGetting new forge run command from run.sh... \033[0m"
       echo ""
-      rcmd=$(grep -m 1 "java" ./mcserver/run.sh)
+      rcmd=$(grep -m 1 "java" ./run.sh)
       # Strip the "$@" from the end of the line and add nogui to the end
       rcmd=$(echo $rcmd | sed 's/--onlyCheckJava || exit 1//')
       printf '\033[0;33mNew forge run command: %s \033[0m' "$rcmd"
@@ -206,7 +206,7 @@ if [ -z "$RUN_COMMAND" ]; then
       if [ ! -z "${MC_RAM}" ]; then
         echo "\033[0;33mSetting user RAM Limit args... \033[0m"
         echo ""
-        echo "-Xms512M -Xmx${MC_RAM}" >> ./mcserver/user_jvm_args.txt
+        echo "-Xms512M -Xmx${MC_RAM}" >> ./user_jvm_args.txt
       fi
       RUN_COMMAND=$rcmd
     else
