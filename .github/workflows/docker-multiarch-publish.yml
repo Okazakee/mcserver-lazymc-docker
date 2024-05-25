@@ -3,7 +3,6 @@ name: Docker multiarch publish
 
 on:
   push:
-    branches: [ master, staging ]
     paths:
       - '*'
       - '!LICENSE'
